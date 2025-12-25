@@ -6,6 +6,8 @@
     <title>دنیای هوشمند درسبان</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.rtl.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
@@ -156,6 +158,61 @@
             color: #666;
             font-size: 0.9rem;
         }
+        
+        .score-input {
+            width: 80px;
+            text-align: center;
+        }
+        
+        .badge-score {
+            font-size: 0.9rem;
+            padding: 5px 10px;
+        }
+        
+        .report-card {
+            background-color: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin: 20px 0;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+            border: 2px solid #eaeaea;
+        }
+        
+        .report-header {
+            text-align: center;
+            border-bottom: 3px double #4A90E2;
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .report-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        
+        .report-table th, .report-table td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: center;
+        }
+        
+        .report-table th {
+            background-color: #f8f9fa;
+            font-weight: bold;
+        }
+        
+        .performance-level {
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: bold;
+        }
+        
+        .level-excellent { background-color: #d4edda; color: #155724; }
+        .level-good { background-color: #d1ecf1; color: #0c5460; }
+        .level-average { background-color: #fff3cd; color: #856404; }
+        .level-poor { background-color: #f8d7da; color: #721c24; }
         
         @media (max-width: 768px) {
             .sidebar {
@@ -699,6 +756,11 @@
                                         <i class="fas fa-chart-line me-2"></i>آمار کلی کلاس
                                     </a>
                                 </li>
+                                <li>
+                                    <a href="#" :class="{active: teacherActiveTab === 'enter-scores'}" @click="teacherActiveTab = 'enter-scores'">
+                                        <i class="fas fa-pen-alt me-2"></i>ثبت نمرات
+                                    </a>
+                                </li>
                             </ul>
                         </div>
                     </div>
@@ -729,13 +791,10 @@
                                                     <td>{{ student.class }}</td>
                                                     <td>{{ student.school }}</td>
                                                     <td>
-                                                        <button class="btn btn-sm btn-outline-primary me-2">
-                                                            <i class="fas fa-edit"></i>
+                                                        <button class="btn btn-sm btn-outline-primary me-2" @click="viewStudentScores(student)">
+                                                            <i class="fas fa-eye"></i>
                                                         </button>
-                                                        <button class="btn btn-sm btn-outline-info me-2">
-                                                            <i class="fas fa-chart-line"></i>
-                                                        </button>
-                                                        <button class="btn btn-sm btn-outline-danger">
+                                                        <button class="btn btn-sm btn-outline-danger" @click="deleteStudent(student.id)">
                                                             <i class="fas fa-trash"></i>
                                                         </button>
                                                     </td>
@@ -750,13 +809,13 @@
                                             <div class="col-md-4">
                                                 <div class="mb-3">
                                                     <label for="studentName" class="form-label">نام کامل دانش‌آموز:</label>
-                                                    <input type="text" class="form-control" id="studentName" placeholder="نام دانش‌آموز">
+                                                    <input type="text" class="form-control" id="studentName" v-model="newStudent.name" placeholder="نام دانش‌آموز">
                                                 </div>
                                             </div>
                                             <div class="col-md-4">
                                                 <div class="mb-3">
                                                     <label for="studentGrade" class="form-label">پایه:</label>
-                                                    <select class="form-select" id="studentGrade">
+                                                    <select class="form-select" id="studentGrade" v-model="newStudent.grade">
                                                         <option>اول</option>
                                                         <option>دوم</option>
                                                         <option>سوم</option>
@@ -769,13 +828,136 @@
                                             <div class="col-md-4">
                                                 <div class="mb-3">
                                                     <label for="studentClass" class="form-label">کلاس:</label>
-                                                    <input type="text" class="form-control" id="studentClass" placeholder="کلاس">
+                                                    <input type="text" class="form-control" id="studentClass" v-model="newStudent.class" placeholder="کلاس">
                                                 </div>
                                             </div>
                                         </div>
-                                        <button class="btn btn-primary">
+                                        <button class="btn btn-primary" @click="addStudent">
                                             <i class="fas fa-plus me-2"></i>ثبت دانش‌آموز
                                         </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- ثبت نمرات -->
+                        <div v-if="teacherActiveTab === 'enter-scores'">
+                            <div class="card">
+                                <div class="card-header">
+                                    <i class="fas fa-pen-alt me-2"></i>ثبت نمرات دانش‌آموزان
+                                </div>
+                                <div class="card-body">
+                                    <div class="row mb-4">
+                                        <div class="col-md-6">
+                                            <div class="mb-3">
+                                                <label for="scoreLesson" class="form-label">درس:</label>
+                                                <select class="form-select" id="scoreLesson" v-model="scoreData.lesson">
+                                                    <option value="ریاضی">ریاضی</option>
+                                                    <option value="علوم">علوم</option>
+                                                    <option value="ادبیات فارسی">ادبیات فارسی</option>
+                                                    <option value="مطالعات اجتماعی">مطالعات اجتماعی</option>
+                                                    <option value="هنر">هنر</option>
+                                                    <option value="ورزش">ورزش</option>
+                                                    <option value="قرآن">قرآن</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="mb-3">
+                                                <label for="scoreDate" class="form-label">تاریخ:</label>
+                                                <input type="date" class="form-control" id="scoreDate" v-model="scoreData.date">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="table-responsive">
+                                        <table class="table table-hover">
+                                            <thead>
+                                                <tr>
+                                                    <th>نام دانش‌آموز</th>
+                                                    <th>پایه</th>
+                                                    <th>کلاس</th>
+                                                    <th>نمره (۱-۴)</th>
+                                                    <th>سطح عملکرد</th>
+                                                    <th>ثبت</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr v-for="student in teacherStudents" :key="student.id">
+                                                    <td>{{ student.name }}</td>
+                                                    <td>{{ student.grade }}</td>
+                                                    <td>{{ student.class }}</td>
+                                                    <td>
+                                                        <input type="number" class="form-control score-input" 
+                                                               min="1" max="4" step="0.5" 
+                                                               v-model="studentScores[student.id]"
+                                                               placeholder="نمره">
+                                                    </td>
+                                                    <td>
+                                                        <span v-if="studentScores[student.id]" class="performance-level" 
+                                                              :class="getPerformanceLevel(studentScores[student.id])">
+                                                            {{ getPerformanceText(studentScores[student.id]) }}
+                                                        </span>
+                                                        <span v-else class="text-muted">--</span>
+                                                    </td>
+                                                    <td>
+                                                        <button class="btn btn-sm btn-primary" 
+                                                                @click="submitScore(student.id, studentScores[student.id])"
+                                                                :disabled="!studentScores[student.id] || studentScores[student.id] < 1 || studentScores[student.id] > 4">
+                                                            <i class="fas fa-save"></i>
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    
+                                    <div class="alert alert-info mt-3">
+                                        <i class="fas fa-info-circle me-2"></i>
+                                        نمرات باید بین ۱ تا ۴ باشند. سطح عملکرد به صورت خودکار محاسبه می‌شود.
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- نمرات ثبت شده -->
+                            <div class="card mt-4">
+                                <div class="card-header">
+                                    <i class="fas fa-list-check me-2"></i>نمرات ثبت شده اخیر
+                                </div>
+                                <div class="card-body">
+                                    <div class="table-responsive">
+                                        <table class="table table-hover">
+                                            <thead>
+                                                <tr>
+                                                    <th>دانش‌آموز</th>
+                                                    <th>درس</th>
+                                                    <th>نمره</th>
+                                                    <th>سطح</th>
+                                                    <th>تاریخ</th>
+                                                    <th>عملیات</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr v-for="score in teacherScores.slice().reverse().slice(0, 10)" :key="score.id">
+                                                    <td>{{ score.studentName }}</td>
+                                                    <td>{{ score.lesson }}</td>
+                                                    <td>
+                                                        <strong>{{ score.score }}</strong>
+                                                    </td>
+                                                    <td>
+                                                        <span class="performance-level" :class="getPerformanceLevel(score.score)">
+                                                            {{ getPerformanceText(score.score) }}
+                                                        </span>
+                                                    </td>
+                                                    <td>{{ score.date }}</td>
+                                                    <td>
+                                                        <button class="btn btn-sm btn-outline-danger" @click="deleteScore(score.id)">
+                                                            <i class="fas fa-trash"></i>
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
                                     </div>
                                 </div>
                             </div>
@@ -792,37 +974,43 @@
                                         <div class="col-md-6">
                                             <div class="mb-3">
                                                 <label for="reportStudent" class="form-label">انتخاب دانش‌آموز:</label>
-                                                <select class="form-select" id="reportStudent">
-                                                    <option>علی محمدی</option>
-                                                    <option>فاطمه احمدی</option>
-                                                    <option>محمد حسینی</option>
-                                                    <option>زهرا کریمی</option>
+                                                <select class="form-select" id="reportStudent" v-model="selectedReportStudent">
+                                                    <option v-for="student in teacherStudents" :value="student">{{ student.name }}</option>
                                                 </select>
                                             </div>
                                         </div>
                                         <div class="col-md-6">
                                             <div class="mb-3">
                                                 <label for="reportLesson" class="form-label">انتخاب درس:</label>
-                                                <select class="form-select" id="reportLesson">
-                                                    <option>ریاضی</option>
-                                                    <option>علوم</option>
-                                                    <option>ادبیات فارسی</option>
-                                                    <option>مطالعات اجتماعی</option>
+                                                <select class="form-select" id="reportLesson" v-model="selectedReportLesson">
+                                                    <option value="ریاضی">ریاضی</option>
+                                                    <option value="علوم">علوم</option>
+                                                    <option value="ادبیات فارسی">ادبیات فارسی</option>
+                                                    <option value="مطالعات اجتماعی">مطالعات اجتماعی</option>
+                                                    <option value="همه دروس">همه دروس</option>
                                                 </select>
                                             </div>
                                         </div>
                                     </div>
                                     
-                                    <div class="row">
-                                        <div class="col-md-6">
-                                            <div class="chart-container">
-                                                <canvas id="studentProgressChart"></canvas>
+                                    <div v-if="selectedReportStudent">
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <div class="chart-container">
+                                                    <canvas id="studentProgressChart"></canvas>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="chart-container">
+                                                    <canvas id="studentPerformanceChart"></canvas>
+                                                </div>
                                             </div>
                                         </div>
-                                        <div class="col-md-6">
-                                            <div class="chart-container">
-                                                <canvas id="studentPerformanceChart"></canvas>
-                                            </div>
+                                        
+                                        <div class="text-center mt-4">
+                                            <button class="btn btn-success" @click="generateStudentReport(selectedReportStudent)">
+                                                <i class="fas fa-print me-2"></i>چاپ کارنامه این دانش‌آموز
+                                            </button>
                                         </div>
                                     </div>
                                 </div>
@@ -845,26 +1033,32 @@
                                         </div>
                                         <div class="col-md-3">
                                             <div class="stat-box">
-                                                <span class="stat-number">3.4</span>
+                                                <span class="stat-number">{{ calculateClassAverage() }}</span>
                                                 <span class="stat-label">میانگین نمرات</span>
                                             </div>
                                         </div>
                                         <div class="col-md-3">
                                             <div class="stat-box">
-                                                <span class="stat-number">85%</span>
+                                                <span class="stat-number">{{ calculatePassPercentage() }}%</span>
                                                 <span class="stat-label">نسبت قبولی</span>
                                             </div>
                                         </div>
                                         <div class="col-md-3">
                                             <div class="stat-box">
-                                                <span class="stat-number">92%</span>
-                                                <span class="stat-label">رضایت والدین</span>
+                                                <span class="stat-number">{{ getTopStudent() }}</span>
+                                                <span class="stat-label">دانش‌آموز برتر</span>
                                             </div>
                                         </div>
                                     </div>
                                     
                                     <div class="chart-container">
                                         <canvas id="classOverallChart"></canvas>
+                                    </div>
+                                    
+                                    <div class="text-center mt-4">
+                                        <button class="btn btn-primary" @click="generateClassReport">
+                                            <i class="fas fa-file-pdf me-2"></i>دریافت گزارش PDF کل کلاس
+                                        </button>
                                     </div>
                                 </div>
                             </div>
@@ -907,73 +1101,100 @@
                                 </div>
                             </div>
                         </div>
+                        
+                        <div class="card mt-4">
+                            <div class="card-header">
+                                <i class="fas fa-chart-line me-2"></i>آمار سریع
+                            </div>
+                            <div class="card-body">
+                                <div class="stat-box mb-3">
+                                    <span class="stat-number">{{ studentAverageGrade }}</span>
+                                    <span class="stat-label">میانگین نمرات</span>
+                                </div>
+                                <div class="stat-box">
+                                    <span class="stat-number">{{ getStudentRank() }}</span>
+                                    <span class="stat-label">رتبه در کلاس</span>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                     
                     <div class="col-md-8">
                         <div class="card">
                             <div class="card-header">
-                                <i class="fas fa-chart-line me-2"></i>کارنامه تحصیلی
+                                <i class="fas fa-table me-2"></i>کارنامه تحصیلی
                             </div>
                             <div class="card-body">
-                                <div class="table-responsive mb-4">
-                                    <table class="table table-hover">
-                                        <thead>
-                                            <tr>
-                                                <th>درس</th>
-                                                <th>نمره</th>
-                                                <th>سطح عملکرد</th>
-                                                <th>میانگین کلاس</th>
-                                                <th>مقایسه با کلاس</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <tr>
-                                                <td>ریاضی</td>
-                                                <td>۴</td>
-                                                <td><span class="badge bg-success">خیلی خوب</span></td>
-                                                <td>۳.۲</td>
-                                                <td><span class="text-success">⬆️ بالاتر از میانگین</span></td>
-                                            </tr>
-                                            <tr>
-                                                <td>علوم</td>
-                                                <td>۳.۵</td>
-                                                <td><span class="badge bg-success">خیلی خوب</span></td>
-                                                <td>۳.۱</td>
-                                                <td><span class="text-success">⬆️ بالاتر از میانگین</span></td>
-                                            </tr>
-                                            <tr>
-                                                <td>ادبیات فارسی</td>
-                                                <td>۳</td>
-                                                <td><span class="badge bg-info">خوب</span></td>
-                                                <td>۲.۹</td>
-                                                <td><span class="text-success">⬆️ بالاتر از میانگین</span></td>
-                                            </tr>
-                                            <tr>
-                                                <td>مطالعات اجتماعی</td>
-                                                <td>۲.۵</td>
-                                                <td><span class="badge bg-warning">قابل قبول</span></td>
-                                                <td>۲.۸</td>
-                                                <td><span class="text-danger">⬇️ پایین‌تر از میانگین</span></td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-                                </div>
-                                
-                                <div class="row">
-                                    <div class="col-md-6">
-                                        <div class="chart-container">
-                                            <canvas id="studentGradesChart"></canvas>
+                                <div id="reportCardContent">
+                                    <div class="report-card">
+                                        <div class="report-header">
+                                            <h3>کارنامه تحصیلی</h3>
+                                            <h5>سال تحصیلی ۱۴۰۳-۱۴۰۲</h5>
+                                            <p><strong>نام دانش‌آموز:</strong> {{ currentUser.name }}</p>
+                                            <p><strong>مدرسه:</strong> شهید صدوقی | <strong>پایه:</strong> ششم | <strong>کلاس:</strong> ۶۰۲</p>
                                         </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="chart-container">
-                                            <canvas id="studentComparisonChart"></canvas>
+                                        
+                                        <div class="table-responsive">
+                                            <table class="report-table">
+                                                <thead>
+                                                    <tr>
+                                                        <th>درس</th>
+                                                        <th>نمره</th>
+                                                        <th>سطح عملکرد</th>
+                                                        <th>میانگین کلاس</th>
+                                                        <th>مقایسه با کلاس</th>
+                                                        <th>توضیحات آموزگار</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr v-for="(grade, index) in studentGrades" :key="index">
+                                                        <td>{{ grade.lesson }}</td>
+                                                        <td><strong>{{ grade.score }}</strong></td>
+                                                        <td>
+                                                            <span class="performance-level" :class="getPerformanceLevel(grade.score)">
+                                                                {{ getPerformanceText(grade.score) }}
+                                                            </span>
+                                                        </td>
+                                                        <td>{{ grade.classAverage }}</td>
+                                                        <td>
+                                                            <span :class="grade.comparison === 'بالاتر' ? 'text-success' : 'text-danger'">
+                                                                {{ grade.comparison === 'بالاتر' ? '⬆️ بالاتر از میانگین' : 
+                                                                   grade.comparison === 'پایین‌تر' ? '⬇️ پایین‌تر از میانگین' : '⚖️ برابر با میانگین' }}
+                                                            </span>
+                                                        </td>
+                                                        <td>{{ grade.teacherComment }}</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                        
+                                        <div class="row mt-4">
+                                            <div class="col-md-6">
+                                                <div class="chart-container">
+                                                    <canvas id="studentGradesChart"></canvas>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="chart-container">
+                                                    <canvas id="studentComparisonChart"></canvas>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="mt-4">
+                                            <h5>خلاصه عملکرد:</h5>
+                                            <p>{{ getStudentSummary() }}</p>
+                                        </div>
+                                        
+                                        <div class="mt-4 text-center">
+                                            <p><strong>مهر و امضای مدیر مدرسه:</strong></p>
+                                            <p>_________________________</p>
                                         </div>
                                     </div>
                                 </div>
                                 
                                 <div class="mt-4 text-center">
-                                    <button class="btn btn-primary">
+                                    <button class="btn btn-primary btn-lg" @click="downloadReportCard">
                                         <i class="fas fa-download me-2"></i>دانلود کارنامه PDF
                                     </button>
                                 </div>
@@ -1051,6 +1272,7 @@
     <script src="https://cdn.jsdelivr.net/npm/vue@3.2.47/dist/vue.global.js"></script>
     <script>
         const { createApp } = Vue;
+        const { jsPDF } = window.jspdf;
         
         createApp({
             data() {
@@ -1078,16 +1300,8 @@
                         { id: 3, username: 'karimi', fullname: 'محمد کریمی', role: 'مدیر مدرسه', school: 'دبستان شهید صدوقی' },
                         { id: 4, username: 'mohammadi', fullname: 'علی محمدی', role: 'معاون', school: 'دبستان شهید صدوقی' }
                     ],
-                    newSchool: {
-                        name: ''
-                    },
-                    newUser: {
-                        username: '',
-                        password: '',
-                        fullname: '',
-                        role: 'آموزگار',
-                        school: ''
-                    },
+                    newSchool: { name: '' },
+                    newUser: { username: '', password: '', fullname: '', role: 'آموزگار', school: '' },
                     editingSchool: { id: null, name: '' },
                     editingUser: { id: null, username: '', fullname: '', role: '', school: '' },
                     // داده‌های مدیر مدرسه
@@ -1096,17 +1310,10 @@
                         { id: 2, username: 'rezaei', fullname: 'مریم رضایی' },
                         { id: 3, username: 'hosseini', fullname: 'سعید حسینی' }
                     ],
-                    newTeacher: {
-                        username: '',
-                        password: '',
-                        fullname: ''
-                    },
+                    newTeacher: { username: '', password: '', fullname: '' },
                     selectedTeacher: 'فاطمه احمدی',
                     teacherReportData: null,
-                    schoolStats: {
-                        teacherCount: 12,
-                        studentCount: 350
-                    },
+                    schoolStats: { teacherCount: 12, studentCount: 350 },
                     // داده‌های آموزگار
                     teacherActiveTab: 'management',
                     teacherStudents: [
@@ -1115,7 +1322,31 @@
                         { id: 3, name: 'محمد حسینی', grade: 'ششم', class: '۶۰۲', school: 'دبستان شهید صدوقی' },
                         { id: 4, name: 'زهرا کریمی', grade: 'ششم', class: '۶۰۲', school: 'دبستان شهید صدوقی' },
                         { id: 5, name: 'سارا رضایی', grade: 'ششم', class: '۶۰۲', school: 'دبستان شهید صدوقی' }
-                    ]
+                    ],
+                    newStudent: { name: '', grade: 'ششم', class: '' },
+                    // سیستم ثبت نمرات
+                    scoreData: { lesson: 'ریاضی', date: new Date().toISOString().split('T')[0] },
+                    studentScores: {},
+                    teacherScores: [
+                        { id: 1, studentName: 'علی محمدی', lesson: 'ریاضی', score: 4, date: '۱۴۰۲/۱۰/۱۵' },
+                        { id: 2, studentName: 'فاطمه احمدی', lesson: 'ریاضی', score: 3.5, date: '۱۴۰۲/۱۰/۱۵' },
+                        { id: 3, studentName: 'محمد حسینی', lesson: 'ریاضی', score: 3, date: '۱۴۰۲/۱۰/۱۵' },
+                        { id: 4, studentName: 'زهرا کریمی', lesson: 'علوم', score: 3.5, date: '۱۴۰۲/۱۰/۱۰' },
+                        { id: 5, studentName: 'سارا رضایی', lesson: 'علوم', score: 4, date: '۱۴۰۲/۱۰/۱۰' }
+                    ],
+                    // گزارش‌ها
+                    selectedReportStudent: null,
+                    selectedReportLesson: 'ریاضی',
+                    // داده‌های دانش‌آموز
+                    studentGrades: [
+                        { lesson: 'ریاضی', score: 4, classAverage: 3.2, comparison: 'بالاتر', teacherComment: 'عالی! تلاش شما قابل تحسین است.' },
+                        { lesson: 'علوم', score: 3.5, classAverage: 3.1, comparison: 'بالاتر', teacherComment: 'خیلی خوب، ادامه دهید.' },
+                        { lesson: 'ادبیات فارسی', score: 3, classAverage: 2.9, comparison: 'بالاتر', teacherComment: 'پیشرفت خوبی داشته‌اید.' },
+                        { lesson: 'مطالعات اجتماعی', score: 2.5, classAverage: 2.8, comparison: 'پایین‌تر', teacherComment: 'نیاز به تلاش بیشتر دارید.' },
+                        { lesson: 'هنر', score: 4, classAverage: 3.5, comparison: 'بالاتر', teacherComment: 'خلاقیت عالی!' },
+                        { lesson: 'ورزش', score: 4, classAverage: 3.8, comparison: 'بالاتر', teacherComment: 'ورزشکار خوبی هستید.' }
+                    ],
+                    studentAverageGrade: 3.5
                 };
             },
             mounted() {
@@ -1127,11 +1358,18 @@
                 if (savedUser) {
                     this.currentUser = JSON.parse(savedUser);
                     this.currentPage = 'dashboard';
+                    
+                    // اگر آموزگار است، تب ثبت نمرات را فعال کن
+                    if (this.currentUser.role === 'آموزگار') {
+                        this.teacherActiveTab = 'enter-scores';
+                    }
                 }
+                
+                // تنظیم تاریخ امروز
+                this.scoreData.date = new Date().toISOString().split('T')[0];
             },
             methods: {
                 login() {
-                    // شبیه‌سازی احراز هویت
                     const users = [
                         { username: 'admin', password: 'admin', name: 'مدیر سیستم', role: 'مدیر سامانه', school: '' },
                         { username: 'karimi', password: '123', name: 'محمد کریمی', role: 'مدیر مدرسه', school: 'دبستان شهید صدوقی' },
@@ -1149,6 +1387,11 @@
                         this.currentUser = foundUser;
                         this.currentPage = 'dashboard';
                         localStorage.setItem('darsban_user', JSON.stringify(foundUser));
+                        
+                        // اگر آموزگار است، تب ثبت نمرات را فعال کن
+                        if (this.currentUser.role === 'آموزگار') {
+                            this.teacherActiveTab = 'enter-scores';
+                        }
                     } else {
                         alert('نام کاربری یا رمز عبور اشتباه است!');
                     }
@@ -1262,7 +1505,6 @@
                 },
                 
                 loadTeacherReport() {
-                    // شبیه‌سازی داده‌های گزارش
                     this.teacherReportData = {
                         studentCount: Math.floor(Math.random() * 30) + 10,
                         averageGrade: (Math.random() * 2 + 2).toFixed(1)
@@ -1271,6 +1513,243 @@
                     setTimeout(() => {
                         this.initTeacherPerformanceChart();
                     }, 100);
+                },
+                
+                // سیستم دانش‌آموزان و نمرات
+                addStudent() {
+                    if (!this.newStudent.name.trim() || !this.newStudent.class.trim()) {
+                        alert('لطفاً نام دانش‌آموز و کلاس را وارد کنید');
+                        return;
+                    }
+                    
+                    const newId = this.teacherStudents.length > 0 ? Math.max(...this.teacherStudents.map(s => s.id)) + 1 : 1;
+                    
+                    this.teacherStudents.push({
+                        id: newId,
+                        name: this.newStudent.name,
+                        grade: this.newStudent.grade,
+                        class: this.newStudent.class,
+                        school: 'دبستان شهید صدوقی'
+                    });
+                    
+                    this.newStudent = { name: '', grade: 'ششم', class: '' };
+                    alert('دانش‌آموز با موفقیت ثبت شد');
+                },
+                
+                deleteStudent(id) {
+                    if (confirm('آیا از حذف این دانش‌آموز اطمینان دارید؟')) {
+                        this.teacherStudents = this.teacherStudents.filter(s => s.id !== id);
+                        // حذف نمرات مربوط به این دانش‌آموز
+                        this.teacherScores = this.teacherScores.filter(score => {
+                            const student = this.teacherStudents.find(s => s.name === score.studentName);
+                            return student;
+                        });
+                    }
+                },
+                
+                viewStudentScores(student) {
+                    this.selectedReportStudent = student;
+                    this.teacherActiveTab = 'reports';
+                },
+                
+                // سیستم ثبت نمرات
+                getPerformanceLevel(score) {
+                    if (score >= 3.5) return 'level-excellent';
+                    if (score >= 2.5) return 'level-good';
+                    if (score >= 1.5) return 'level-average';
+                    return 'level-poor';
+                },
+                
+                getPerformanceText(score) {
+                    if (score >= 3.5) return 'خیلی خوب';
+                    if (score >= 2.5) return 'خوب';
+                    if (score >= 1.5) return 'قابل قبول';
+                    return 'نیاز به تلاش';
+                },
+                
+                submitScore(studentId, score) {
+                    if (!score || score < 1 || score > 4) {
+                        alert('نمره باید بین ۱ تا ۴ باشد');
+                        return;
+                    }
+                    
+                    const student = this.teacherStudents.find(s => s.id === studentId);
+                    if (!student) return;
+                    
+                    const newId = this.teacherScores.length > 0 ? Math.max(...this.teacherScores.map(s => s.id)) + 1 : 1;
+                    const today = new Date();
+                    const dateStr = `${today.getFullYear()}/${today.getMonth() + 1}/${today.getDate()}`;
+                    
+                    this.teacherScores.push({
+                        id: newId,
+                        studentName: student.name,
+                        lesson: this.scoreData.lesson,
+                        score: parseFloat(score),
+                        date: dateStr
+                    });
+                    
+                    // پاک کردن فیلد نمره برای این دانش‌آموز
+                    this.$set(this.studentScores, studentId, '');
+                    
+                    alert(`نمره ${score} برای ${student.name} در درس ${this.scoreData.lesson} ثبت شد`);
+                },
+                
+                deleteScore(scoreId) {
+                    if (confirm('آیا از حذف این نمره اطمینان دارید؟')) {
+                        this.teacherScores = this.teacherScores.filter(s => s.id !== scoreId);
+                    }
+                },
+                
+                // محاسبات آماری
+                calculateClassAverage() {
+                    if (this.teacherScores.length === 0) return 0;
+                    const sum = this.teacherScores.reduce((total, score) => total + score.score, 0);
+                    return (sum / this.teacherScores.length).toFixed(1);
+                },
+                
+                calculatePassPercentage() {
+                    if (this.teacherScores.length === 0) return 0;
+                    const passCount = this.teacherScores.filter(score => score.score >= 2.5).length;
+                    return Math.round((passCount / this.teacherScores.length) * 100);
+                },
+                
+                getTopStudent() {
+                    if (this.teacherScores.length === 0) return '--';
+                    
+                    const studentAverages = {};
+                    const studentCounts = {};
+                    
+                    this.teacherScores.forEach(score => {
+                        if (!studentAverages[score.studentName]) {
+                            studentAverages[score.studentName] = 0;
+                            studentCounts[score.studentName] = 0;
+                        }
+                        studentAverages[score.studentName] += score.score;
+                        studentCounts[score.studentName] += 1;
+                    });
+                    
+                    let topStudent = '';
+                    let topAverage = 0;
+                    
+                    for (const student in studentAverages) {
+                        const average = studentAverages[student] / studentCounts[student];
+                        if (average > topAverage) {
+                            topAverage = average;
+                            topStudent = student;
+                        }
+                    }
+                    
+                    return topStudent.split(' ')[0]; // فقط نام کوچک
+                },
+                
+                // گزارش‌گیری دانش‌آموز
+                generateStudentReport(student) {
+                    alert(`گزارش برای ${student.name} آماده شد. سیستم چاپ را اجرا کنید.`);
+                    window.print();
+                },
+                
+                // گزارش‌گیری کل کلاس
+                generateClassReport() {
+                    const doc = new jsPDF('p', 'mm', 'a4');
+                    
+                    // هدر گزارش
+                    doc.setFontSize(20);
+                    doc.text('گزارش عملکرد کل کلاس', 105, 20, { align: 'center' });
+                    
+                    doc.setFontSize(12);
+                    doc.text(`آموزگار: ${this.currentUser.name}`, 20, 40);
+                    doc.text(`تاریخ: ${new Date().toLocaleDateString('fa-IR')}`, 20, 50);
+                    doc.text(`تعداد دانش‌آموزان: ${this.teacherStudents.length}`, 20, 60);
+                    doc.text(`میانگین نمرات کلاس: ${this.calculateClassAverage()}`, 20, 70);
+                    
+                    // جدول دانش‌آموزان
+                    let y = 90;
+                    doc.setFontSize(14);
+                    doc.text('لیست دانش‌آموزان و میانگین نمرات', 20, y);
+                    y += 10;
+                    
+                    doc.setFontSize(10);
+                    doc.text('ردیف', 20, y);
+                    doc.text('نام دانش‌آموز', 40, y);
+                    doc.text('میانگین نمرات', 100, y);
+                    doc.text('سطح عملکرد', 150, y);
+                    
+                    y += 10;
+                    doc.setLineWidth(0.5);
+                    doc.line(20, y, 190, y);
+                    y += 5;
+                    
+                    const studentAverages = {};
+                    const studentCounts = {};
+                    
+                    this.teacherScores.forEach(score => {
+                        if (!studentAverages[score.studentName]) {
+                            studentAverages[score.studentName] = 0;
+                            studentCounts[score.studentName] = 0;
+                        }
+                        studentAverages[score.studentName] += score.score;
+                        studentCounts[score.studentName] += 1;
+                    });
+                    
+                    let row = 1;
+                    for (const studentName in studentAverages) {
+                        const average = (studentAverages[studentName] / studentCounts[studentName]).toFixed(1);
+                        const level = this.getPerformanceText(parseFloat(average));
+                        
+                        doc.text(row.toString(), 20, y);
+                        doc.text(studentName, 40, y);
+                        doc.text(average, 100, y);
+                        doc.text(level, 150, y);
+                        
+                        y += 10;
+                        row++;
+                        
+                        if (y > 250) {
+                            doc.addPage();
+                            y = 20;
+                        }
+                    }
+                    
+                    // ذخیره PDF
+                    doc.save(`گزارش_کلاس_${this.currentUser.name}.pdf`);
+                },
+                
+                // سیستم کارنامه دانش‌آموز
+                getStudentRank() {
+                    const ranks = ['اول', 'دوم', 'سوم', 'چهارم', 'پنجم'];
+                    return ranks[Math.floor(Math.random() * ranks.length)];
+                },
+                
+                getStudentSummary() {
+                    const avg = this.studentAverageGrade;
+                    if (avg >= 3.5) {
+                        return 'عملکرد شما عالی است! در تمام دروس پیشرفت خوبی داشته‌اید. ادامه دهید.';
+                    } else if (avg >= 3) {
+                        return 'عملکرد شما خوب است. در برخی دروس می‌توانید بهتر عمل کنید.';
+                    } else if (avg >= 2.5) {
+                        return 'عملکرد شما قابل قبول است. نیاز به تلاش بیشتر در برخی دروس دارید.';
+                    } else {
+                        return 'نیاز به تلاش جدی‌تری دارید. با معلم خود مشورت کنید.';
+                    }
+                },
+                
+                downloadReportCard() {
+                    const element = document.getElementById('reportCardContent');
+                    
+                    html2canvas(element, {
+                        scale: 2,
+                        useCORS: true,
+                        logging: false,
+                        backgroundColor: '#ffffff'
+                    }).then(canvas => {
+                        const imgData = canvas.toDataURL('image/png');
+                        const pdf = new jsPDF('p', 'mm', 'a4');
+                        const imgWidth = 190;
+                        const imgHeight = canvas.height * imgWidth / canvas.width;
+                        
+                        pdf.addImage(imgData, 'PNG', 10, 10, imgWidth, imgHeight);
+                        pdf.save(`کارنامه_${this.currentUser.name}.pdf`);
+                    });
                 },
                 
                 // نمودارها
@@ -1286,7 +1765,7 @@
                         new Chart(roleCtx.getContext('2d'), {
                             type: 'pie',
                             data: {
-                                labels: Object.keys(roleCounts).map(r => this.fixRTL(r)),
+                                labels: Object.keys(roleCounts),
                                 datasets: [{
                                     data: Object.values(roleCounts),
                                     backgroundColor: ['#4A90E2', '#FFC107', '#28A745', '#DC3545', '#6C757D']
@@ -1295,15 +1774,7 @@
                             options: {
                                 responsive: true,
                                 plugins: {
-                                    legend: {
-                                        position: 'bottom',
-                                        rtl: true,
-                                        labels: {
-                                            font: {
-                                                family: 'Vazir'
-                                            }
-                                        }
-                                    }
+                                    legend: { position: 'bottom' }
                                 }
                             }
                         });
@@ -1315,55 +1786,31 @@
                         new Chart(gradeCtx.getContext('2d'), {
                             type: 'bar',
                             data: {
-                                labels: ['اول', 'دوم', 'سوم', 'چهارم', 'پنجم', 'ششم'].map(g => this.fixRTL(g)),
+                                labels: ['اول', 'دوم', 'سوم', 'چهارم', 'پنجم', 'ششم'],
                                 datasets: [{
-                                    label: this.fixRTL('تعداد دانش‌آموزان'),
+                                    label: 'تعداد دانش‌آموزان',
                                     data: [45, 52, 48, 55, 60, 58],
                                     backgroundColor: '#4A90E2'
                                 }]
                             },
-                            options: {
-                                responsive: true,
-                                scales: {
-                                    y: {
-                                        beginAtZero: true,
-                                        ticks: {
-                                            font: {
-                                                family: 'Vazir'
-                                            }
-                                        }
-                                    },
-                                    x: {
-                                        ticks: {
-                                            font: {
-                                                family: 'Vazir'
-                                            }
-                                        }
-                                    }
-                                },
-                                plugins: {
-                                    legend: {
-                                        labels: {
-                                            font: {
-                                                family: 'Vazir'
-                                            }
-                                        }
-                                    }
-                                }
-                            }
+                            options: { responsive: true }
                         });
                     }
                     
                     // نمودار پیشرفت دانش‌آموز
                     const progressCtx = document.getElementById('studentProgressChart');
-                    if (progressCtx) {
+                    if (progressCtx && this.selectedReportStudent) {
+                        const studentScores = this.teacherScores
+                            .filter(s => s.studentName === this.selectedReportStudent.name)
+                            .slice(-5);
+                        
                         new Chart(progressCtx.getContext('2d'), {
                             type: 'line',
                             data: {
-                                labels: ['نمره ۱', 'نمره ۲', 'نمره ۳', 'نمره ۴', 'نمره ۵'].map(l => this.fixRTL(l)),
+                                labels: studentScores.map((s, i) => `نمره ${i+1}`),
                                 datasets: [{
-                                    label: this.fixRTL('ریاضی'),
-                                    data: [2.5, 3, 3.5, 4, 4],
+                                    label: `پیشرفت ${this.selectedReportStudent.name}`,
+                                    data: studentScores.map(s => s.score),
                                     borderColor: '#4A90E2',
                                     backgroundColor: 'rgba(74, 144, 226, 0.1)',
                                     fill: true
@@ -1372,31 +1819,7 @@
                             options: {
                                 responsive: true,
                                 scales: {
-                                    y: {
-                                        min: 1,
-                                        max: 4,
-                                        ticks: {
-                                            font: {
-                                                family: 'Vazir'
-                                            }
-                                        }
-                                    },
-                                    x: {
-                                        ticks: {
-                                            font: {
-                                                family: 'Vazir'
-                                            }
-                                        }
-                                    }
-                                },
-                                plugins: {
-                                    legend: {
-                                        labels: {
-                                            font: {
-                                                family: 'Vazir'
-                                            }
-                                        }
-                                    }
+                                    y: { min: 1, max: 4 }
                                 }
                             }
                         });
@@ -1404,28 +1827,34 @@
                     
                     // نمودار عملکرد دانش‌آموز
                     const performanceCtx = document.getElementById('studentPerformanceChart');
-                    if (performanceCtx) {
+                    if (performanceCtx && this.selectedReportStudent) {
+                        const studentScores = this.teacherScores
+                            .filter(s => s.studentName === this.selectedReportStudent.name);
+                        
+                        const levelCounts = {
+                            'خیلی خوب': 0,
+                            'خوب': 0,
+                            'قابل قبول': 0,
+                            'نیاز به تلاش': 0
+                        };
+                        
+                        studentScores.forEach(score => {
+                            levelCounts[this.getPerformanceText(score.score)]++;
+                        });
+                        
                         new Chart(performanceCtx.getContext('2d'), {
                             type: 'doughnut',
                             data: {
-                                labels: ['خیلی خوب', 'خوب', 'قابل قبول', 'نیاز به تلاس بیشتر'].map(l => this.fixRTL(l)),
+                                labels: Object.keys(levelCounts),
                                 datasets: [{
-                                    data: [8, 5, 3, 1],
+                                    data: Object.values(levelCounts),
                                     backgroundColor: ['#28A745', '#4A90E2', '#FFC107', '#DC3545']
                                 }]
                             },
                             options: {
                                 responsive: true,
                                 plugins: {
-                                    legend: {
-                                        position: 'bottom',
-                                        rtl: true,
-                                        labels: {
-                                            font: {
-                                                family: 'Vazir'
-                                            }
-                                        }
-                                    }
+                                    legend: { position: 'bottom' }
                                 }
                             }
                         });
@@ -1434,44 +1863,37 @@
                     // نمودار کلی کلاس
                     const classCtx = document.getElementById('classOverallChart');
                     if (classCtx) {
+                        const lessonAverages = {};
+                        const lessonCounts = {};
+                        
+                        this.teacherScores.forEach(score => {
+                            if (!lessonAverages[score.lesson]) {
+                                lessonAverages[score.lesson] = 0;
+                                lessonCounts[score.lesson] = 0;
+                            }
+                            lessonAverages[score.lesson] += score.score;
+                            lessonCounts[score.lesson] += 1;
+                        });
+                        
+                        const lessons = Object.keys(lessonAverages);
+                        const averages = lessons.map(lesson => 
+                            (lessonAverages[lesson] / lessonCounts[lesson]).toFixed(1)
+                        );
+                        
                         new Chart(classCtx.getContext('2d'), {
                             type: 'bar',
                             data: {
-                                labels: ['ریاضی', 'علوم', 'ادبیات', 'اجتماعی', 'هنر', 'ورزش'].map(l => this.fixRTL(l)),
+                                labels: lessons,
                                 datasets: [{
-                                    label: this.fixRTL('میانگین نمرات'),
-                                    data: [3.4, 3.2, 3.1, 2.9, 3.6, 3.8],
+                                    label: 'میانگین نمرات',
+                                    data: averages,
                                     backgroundColor: '#4A90E2'
                                 }]
                             },
                             options: {
                                 responsive: true,
                                 scales: {
-                                    y: {
-                                        min: 1,
-                                        max: 4,
-                                        ticks: {
-                                            font: {
-                                                family: 'Vazir'
-                                            }
-                                        }
-                                    },
-                                    x: {
-                                        ticks: {
-                                            font: {
-                                                family: 'Vazir'
-                                            }
-                                        }
-                                    }
-                                },
-                                plugins: {
-                                    legend: {
-                                        labels: {
-                                            font: {
-                                                family: 'Vazir'
-                                            }
-                                        }
-                                    }
+                                    y: { min: 1, max: 4 }
                                 }
                             }
                         });
@@ -1483,10 +1905,10 @@
                         new Chart(studentGradesCtx.getContext('2d'), {
                             type: 'radar',
                             data: {
-                                labels: ['ریاضی', 'علوم', 'ادبیات', 'اجتماعی', 'هنر', 'ورزش'].map(l => this.fixRTL(l)),
+                                labels: this.studentGrades.map(g => g.lesson),
                                 datasets: [{
-                                    label: this.fixRTL('نمرات دانش‌آموز'),
-                                    data: [4, 3.5, 3, 2.5, 3.8, 4],
+                                    label: 'نمرات دانش‌آموز',
+                                    data: this.studentGrades.map(g => g.score),
                                     backgroundColor: 'rgba(74, 144, 226, 0.2)',
                                     borderColor: '#4A90E2'
                                 }]
@@ -1494,24 +1916,7 @@
                             options: {
                                 responsive: true,
                                 scales: {
-                                    r: {
-                                        min: 1,
-                                        max: 4,
-                                        ticks: {
-                                            font: {
-                                                family: 'Vazir'
-                                            }
-                                        }
-                                    }
-                                },
-                                plugins: {
-                                    legend: {
-                                        labels: {
-                                            font: {
-                                                family: 'Vazir'
-                                            }
-                                        }
-                                    }
+                                    r: { min: 1, max: 4 }
                                 }
                             }
                         });
@@ -1523,16 +1928,16 @@
                         new Chart(comparisonCtx.getContext('2d'), {
                             type: 'bar',
                             data: {
-                                labels: ['ریاضی', 'علوم', 'ادبیات', 'اجتماعی'].map(l => this.fixRTL(l)),
+                                labels: this.studentGrades.map(g => g.lesson),
                                 datasets: [
                                     {
-                                        label: this.fixRTL('دانش‌آموز'),
-                                        data: [4, 3.5, 3, 2.5],
+                                        label: 'دانش‌آموز',
+                                        data: this.studentGrades.map(g => g.score),
                                         backgroundColor: '#4A90E2'
                                     },
                                     {
-                                        label: this.fixRTL('میانگین کلاس'),
-                                        data: [3.2, 3.1, 2.9, 2.8],
+                                        label: 'میانگین کلاس',
+                                        data: this.studentGrades.map(g => g.classAverage),
                                         backgroundColor: '#FFC107'
                                     }
                                 ]
@@ -1540,31 +1945,7 @@
                             options: {
                                 responsive: true,
                                 scales: {
-                                    y: {
-                                        min: 1,
-                                        max: 4,
-                                        ticks: {
-                                            font: {
-                                                family: 'Vazir'
-                                            }
-                                        }
-                                    },
-                                    x: {
-                                        ticks: {
-                                            font: {
-                                                family: 'Vazir'
-                                            }
-                                        }
-                                    }
-                                },
-                                plugins: {
-                                    legend: {
-                                        labels: {
-                                            font: {
-                                                family: 'Vazir'
-                                            }
-                                        }
-                                    }
+                                    y: { min: 1, max: 4 }
                                 }
                             }
                         });
@@ -1577,50 +1958,16 @@
                         new Chart(teacherCtx.getContext('2d'), {
                             type: 'bar',
                             data: {
-                                labels: ['مهر', 'آبان', 'آذر', 'دی', 'بهمن', 'اسفند'].map(m => this.fixRTL(m)),
+                                labels: ['مهر', 'آبان', 'آذر', 'دی', 'بهمن', 'اسفند'],
                                 datasets: [{
-                                    label: this.fixRTL('میانگین نمرات کلاس'),
+                                    label: 'میانگین نمرات کلاس',
                                     data: [2.8, 3.1, 3.3, 3.4, 3.5, 3.6],
                                     backgroundColor: '#4A90E2'
                                 }]
                             },
-                            options: {
-                                responsive: true,
-                                scales: {
-                                    y: {
-                                        min: 1,
-                                        max: 4,
-                                        ticks: {
-                                            font: {
-                                                family: 'Vazir'
-                                            }
-                                        }
-                                    },
-                                    x: {
-                                        ticks: {
-                                            font: {
-                                                family: 'Vazir'
-                                            }
-                                        }
-                                    }
-                                },
-                                plugins: {
-                                    legend: {
-                                        labels: {
-                                            font: {
-                                                family: 'Vazir'
-                                            }
-                                        }
-                                    }
-                                }
-                            }
+                            options: { responsive: true }
                         });
                     }
-                },
-                
-                fixRTL(text) {
-                    // یک تابع ساده برای نمایش بهتر متن فارسی (نمایش ساده)
-                    return text;
                 }
             }
         }).mount('#app');

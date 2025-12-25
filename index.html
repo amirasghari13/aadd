@@ -3,1974 +3,1960 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>دنیای هوشمند درسبان</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.rtl.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+    <title>سیستم بانک سوالات</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
+        /* ==================== RESET و متغیرها ==================== */
         :root {
-            --primary-color: #4A90E2;
-            --secondary-color: #357ABD;
-            --success-color: #28a745;
-            --danger-color: #dc3545;
-            --warning-color: #ffc107;
-            --info-color: #17a2b8;
-            --light-color: #f8f9fa;
-            --dark-color: #343a40;
+            --primary: #667eea;
+            --primary-dark: #5a67d8;
+            --secondary: #764ba2;
+            --success: #2ecc71;
+            --danger: #e74c3c;
+            --warning: #f39c12;
+            --info: #3498db;
+            --light: #f8f9fa;
+            --dark: #343a40;
+            --gray: #6c757d;
+            --border: #dee2e6;
+            --shadow: 0 5px 15px rgba(0,0,0,0.1);
+            --shadow-lg: 0 10px 40px rgba(0,0,0,0.2);
+            --radius: 10px;
+            --transition: all 0.3s ease;
         }
         
         * {
-            font-family: 'Vazir', 'Segoe UI', Tahoma, sans-serif;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
         
         body {
-            background-color: #f5f7fa;
-            color: #333;
-            padding-top: 20px;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            min-height: 100vh;
+            color: var(--dark);
+            line-height: 1.6;
         }
         
-        .login-container {
-            max-width: 500px;
-            margin: 50px auto;
-            padding: 30px;
-            background-color: white;
-            border-radius: 15px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-        }
-        
-        .dashboard-header {
-            background: linear-gradient(135deg, #4A90E2 0%, #357ABD 100%);
-            color: white;
+        /* ==================== طرح کلی ==================== */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
             padding: 20px;
-            border-radius: 10px;
+            min-height: 100vh;
+        }
+        
+        /* ==================== هدر ==================== */
+        .header {
+            background: white;
+            padding: 20px 30px;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
             margin-bottom: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
         }
         
-        .card {
-            border-radius: 10px;
-            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
-            margin-bottom: 20px;
+        .header h1 {
+            color: var(--dark);
+            margin-bottom: 5px;
+            font-size: 1.8rem;
+        }
+        
+        .header .user-info {
+            color: var(--gray);
+            font-size: 0.9rem;
+        }
+        
+        /* ==================== دکمه‌ها ==================== */
+        .btn {
+            padding: 10px 20px;
             border: none;
+            border-radius: 5px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: var(--transition);
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            font-weight: 500;
         }
         
-        .card-header {
-            background-color: #f8f9fa;
-            border-bottom: 1px solid #eee;
-            font-weight: bold;
-        }
-        
-        .nav-tabs .nav-link {
-            color: #555;
-            border: none;
-            border-bottom: 3px solid transparent;
-            margin: 0 5px;
-        }
-        
-        .nav-tabs .nav-link.active {
-            color: var(--primary-color);
-            border-bottom: 3px solid var(--primary-color);
-            background-color: transparent;
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
         }
         
         .btn-primary {
-            background-color: var(--primary-color);
-            border-color: var(--primary-color);
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
         }
         
-        .btn-primary:hover {
-            background-color: var(--secondary-color);
-            border-color: var(--secondary-color);
+        .btn-success {
+            background: var(--success);
+            color: white;
         }
         
-        .sidebar {
-            background-color: white;
-            border-radius: 10px;
-            padding: 20px;
-            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
-            height: fit-content;
+        .btn-danger {
+            background: var(--danger);
+            color: white;
         }
         
-        .sidebar-menu {
-            list-style: none;
-            padding: 0;
+        .btn-info {
+            background: var(--info);
+            color: white;
         }
         
-        .sidebar-menu li {
-            margin-bottom: 10px;
+        .btn-warning {
+            background: var(--warning);
+            color: white;
         }
         
-        .sidebar-menu a {
-            display: block;
-            padding: 12px 15px;
-            color: #555;
-            text-decoration: none;
-            border-radius: 8px;
-            transition: all 0.3s;
+        .btn-light {
+            background: var(--light);
+            color: var(--dark);
         }
         
-        .sidebar-menu a:hover {
-            background-color: #f0f2f6;
-            color: var(--primary-color);
+        .btn-block {
+            width: 100%;
         }
         
-        .sidebar-menu a.active {
-            background-color: #e8f0fe;
-            color: var(--primary-color);
-            border-right: 4px solid var(--primary-color);
+        .btn-sm {
+            padding: 6px 12px;
+            font-size: 0.85rem;
         }
         
-        .table-responsive {
-            border-radius: 8px;
-            overflow: hidden;
+        /* ==================== فرم‌ها ==================== */
+        .form-container {
+            background: white;
+            padding: 40px;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow-lg);
+            width: 100%;
+            max-width: 500px;
+            margin: 50px auto;
         }
         
-        .alert {
-            border-radius: 8px;
-            border: none;
-        }
-        
-        .chart-container {
-            position: relative;
-            height: 300px;
-            margin: 20px 0;
-        }
-        
-        .stat-box {
-            background-color: white;
-            border-radius: 10px;
-            padding: 20px;
+        .form-container h2 {
             text-align: center;
-            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+            color: var(--dark);
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid var(--primary);
+        }
+        
+        .form-group {
             margin-bottom: 20px;
         }
         
-        .stat-number {
-            font-size: 2.5rem;
-            font-weight: bold;
-            color: var(--primary-color);
+        .form-group label {
             display: block;
-            margin-bottom: 5px;
+            margin-bottom: 8px;
+            color: var(--dark);
+            font-weight: 600;
+            font-size: 0.95rem;
         }
         
-        .stat-label {
-            color: #666;
-            font-size: 0.9rem;
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid var(--border);
+            border-radius: 5px;
+            font-size: 1rem;
+            font-family: inherit;
+            transition: var(--transition);
         }
         
-        .score-input {
-            width: 80px;
-            text-align: center;
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            border-color: var(--primary);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
         }
         
-        .badge-score {
-            font-size: 0.9rem;
-            padding: 5px 10px;
+        .form-group textarea {
+            min-height: 120px;
+            resize: vertical;
+            line-height: 1.5;
         }
         
-        .report-card {
-            background-color: white;
-            border-radius: 15px;
+        /* ==================== پیام‌ها ==================== */
+        .alert {
+            padding: 15px 20px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            animation: slideIn 0.3s ease;
+        }
+        
+        @keyframes slideIn {
+            from { transform: translateY(-20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .alert-error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
+        .alert-warning {
+            background: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeaa7;
+        }
+        
+        .alert-info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+        
+        .alert i {
+            font-size: 1.2rem;
+        }
+        
+        /* ==================== دشبورد ==================== */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        
+        .dashboard-card {
+            background: white;
             padding: 30px;
-            margin: 20px 0;
-            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
-            border: 2px solid #eaeaea;
-        }
-        
-        .report-header {
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
             text-align: center;
-            border-bottom: 3px double #4A90E2;
-            padding-bottom: 20px;
-            margin-bottom: 30px;
+            transition: var(--transition);
+            cursor: pointer;
+            text-decoration: none;
+            color: var(--dark);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 200px;
         }
         
-        .report-table {
+        .dashboard-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.15);
+        }
+        
+        .dashboard-card i {
+            font-size: 3rem;
+            margin-bottom: 15px;
+            color: var(--primary);
+        }
+        
+        .dashboard-card h3 {
+            margin-bottom: 10px;
+            color: var(--dark);
+            font-size: 1.4rem;
+        }
+        
+        .dashboard-card p {
+            color: var(--gray);
+            line-height: 1.6;
+            font-size: 0.95rem;
+        }
+        
+        /* ==================== ناوبری ==================== */
+        .nav-tabs {
+            display: flex;
+            background: white;
+            border-radius: var(--radius);
+            overflow: hidden;
+            margin-bottom: 20px;
+            box-shadow: var(--shadow);
+            flex-wrap: wrap;
+        }
+        
+        .nav-tab {
+            padding: 15px 25px;
+            text-decoration: none;
+            color: var(--dark);
+            flex: 1;
+            text-align: center;
+            transition: var(--transition);
+            font-weight: 500;
+            min-width: 120px;
+        }
+        
+        .nav-tab:hover,
+        .nav-tab.active {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+        }
+        
+        /* ==================== جداول ==================== */
+        .table-container {
+            background: white;
+            padding: 30px;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            margin-top: 20px;
+            overflow-x: auto;
+        }
+        
+        .table-container h2 {
+            color: var(--dark);
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--primary);
+        }
+        
+        table {
             width: 100%;
             border-collapse: collapse;
-            margin: 20px 0;
+            margin-top: 15px;
+            min-width: 600px;
         }
         
-        .report-table th, .report-table td {
-            border: 1px solid #ddd;
-            padding: 12px;
-            text-align: center;
+        th, td {
+            padding: 15px;
+            text-align: right;
+            border-bottom: 1px solid var(--border);
         }
         
-        .report-table th {
-            background-color: #f8f9fa;
-            font-weight: bold;
+        th {
+            background: var(--primary);
+            color: white;
+            font-weight: 600;
+            position: sticky;
+            top: 0;
         }
         
-        .performance-level {
-            padding: 5px 10px;
+        tr:hover {
+            background: #f9f9f9;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 5px;
+            flex-wrap: wrap;
+        }
+        
+        /* ==================== سوالات ==================== */
+        .questions-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        
+        .question-card {
+            background: white;
+            padding: 25px;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .question-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.15);
+        }
+        
+        .question-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+        
+        .difficulty {
+            padding: 5px 12px;
             border-radius: 20px;
-            font-size: 0.85rem;
+            font-size: 0.8rem;
             font-weight: bold;
+            text-transform: uppercase;
         }
         
-        .level-excellent { background-color: #d4edda; color: #155724; }
-        .level-good { background-color: #d1ecf1; color: #0c5460; }
-        .level-average { background-color: #fff3cd; color: #856404; }
-        .level-poor { background-color: #f8d7da; color: #721c24; }
+        .difficulty-easy {
+            background: #d4edda;
+            color: #155724;
+        }
         
+        .difficulty-medium {
+            background: #fff3cd;
+            color: #856404;
+        }
+        
+        .difficulty-hard {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        
+        .question-text {
+            color: var(--dark);
+            line-height: 1.7;
+            margin-bottom: 20px;
+            flex-grow: 1;
+            font-size: 1.05rem;
+        }
+        
+        .options-list {
+            list-style: none;
+            padding: 0;
+            margin: 15px 0;
+        }
+        
+        .options-list li {
+            padding: 12px;
+            margin-bottom: 10px;
+            background: #f8f9fa;
+            border-radius: 5px;
+            border: 1px solid var(--border);
+            transition: var(--transition);
+        }
+        
+        .options-list li:hover {
+            background: #e9ecef;
+        }
+        
+        .options-list li.selected {
+            background: #d1ecf1;
+            border-color: #bee5eb;
+        }
+        
+        .teacher-info {
+            color: var(--gray);
+            font-size: 0.85rem;
+            margin-top: 15px;
+            padding-top: 10px;
+            border-top: 1px solid #eee;
+            font-style: italic;
+        }
+        
+        /* ==================== پاسخگویی ==================== */
+        .answer-section {
+            margin-top: 20px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 5px;
+            border: 1px solid var(--border);
+        }
+        
+        /* ==================== حالت‌های مختلف ==================== */
+        .hidden {
+            display: none !important;
+        }
+        
+        .loading {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 200px;
+            font-size: 1.2rem;
+            color: var(--gray);
+        }
+        
+        .loading i {
+            margin-right: 10px;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 50px 20px;
+            color: var(--gray);
+        }
+        
+        .empty-state i {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            color: #dee2e6;
+        }
+        
+        /* ==================== فوتر ==================== */
+        .footer {
+            text-align: center;
+            margin-top: 40px;
+            padding: 20px;
+            color: white;
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+        
+        /* ==================== رسپانسیو ==================== */
         @media (max-width: 768px) {
-            .sidebar {
-                margin-bottom: 20px;
+            .container {
+                padding: 10px;
+            }
+            
+            .header {
+                flex-direction: column;
+                text-align: center;
+                padding: 15px;
+            }
+            
+            .form-container {
+                padding: 25px;
+                margin: 20px auto;
+            }
+            
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .questions-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .nav-tabs {
+                flex-direction: column;
+            }
+            
+            .nav-tab {
+                padding: 12px;
+                min-width: auto;
+            }
+            
+            .table-container {
+                padding: 15px;
+            }
+            
+            th, td {
+                padding: 10px;
             }
         }
         
-        /* فونت فارسی */
-        @font-face {
-            font-family: 'Vazir';
-            src: url('https://cdn.jsdelivr.net/gh/rastikerdar/vazir-font@v30.1.0/dist/Vazir.woff2') format('woff2');
-            font-weight: normal;
-            font-style: normal;
-        }
-        
-        /* استایل‌های خاص برای راست‌چین */
-        .form-control, .form-select {
-            text-align: right;
-        }
-        
-        .table th {
-            text-align: right;
-        }
-        
-        .modal-header .btn-close {
-            margin: -0.5rem -0.5rem -0.5rem auto;
+        @media (max-width: 480px) {
+            .btn {
+                padding: 8px 15px;
+                font-size: 0.9rem;
+            }
+            
+            .dashboard-card {
+                padding: 20px;
+                min-height: 150px;
+            }
+            
+            .dashboard-card i {
+                font-size: 2.5rem;
+            }
+            
+            .form-container h2 {
+                font-size: 1.5rem;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="container" id="app">
+    <div class="container">
         <!-- صفحه ورود -->
-        <div id="login-page" v-if="currentPage === 'login'">
-            <div class="login-container">
-                <div class="text-center mb-4">
-                    <i class="fas fa-graduation-cap fa-3x text-primary mb-3"></i>
-                    <h2>💻 ورود به دنیای هوشمند درسبان</h2>
-                    <p class="text-muted">سامانه هوشمند مدیریت تحصیلی</p>
+        <div id="loginPage" class="form-container">
+            <h2><i class="fas fa-sign-in-alt"></i> ورود به سیستم بانک سوالات</h2>
+            
+            <div id="loginAlert" class="alert hidden"></div>
+            
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="username"><i class="fas fa-user"></i> نام کاربری</label>
+                    <input type="text" id="username" name="username" required 
+                           placeholder="نام کاربری خود را وارد کنید">
                 </div>
                 
-                <div class="mb-3">
-                    <label for="username" class="form-label">نام کاربری:</label>
-                    <input type="text" class="form-control" id="username" v-model="loginData.username" placeholder="نام کاربری خود را وارد کنید">
+                <div class="form-group">
+                    <label for="password"><i class="fas fa-lock"></i> رمز عبور</label>
+                    <input type="password" id="password" name="password" required 
+                           placeholder="رمز عبور خود را وارد کنید">
                 </div>
                 
-                <div class="mb-4">
-                    <label for="password" class="form-label">رمز عبور:</label>
-                    <input type="password" class="form-control" id="password" v-model="loginData.password" placeholder="رمز عبور خود را وارد کنید">
-                </div>
-                
-                <button class="btn btn-primary w-100 mb-3" @click="login">
-                    <i class="fas fa-sign-in-alt me-2"></i>ورود به سیستم
+                <button type="submit" class="btn btn-primary btn-block">
+                    <i class="fas fa-sign-in-alt"></i> ورود به سیستم
                 </button>
-                
-                <div class="text-center mt-4">
-                    <p class="text-muted">
-                        <i class="fas fa-info-circle me-2"></i>
-                        درسبان، همراه هوشمند شما — طراحی‌شده توسط فاطمه سیفی‌پور 💙
-                    </p>
+            </form>
+            
+            <div style="text-align: center; margin-top: 30px; color: var(--gray);">
+                <p><strong>کاربران پیش‌فرض:</strong></p>
+                <div style="background: #f8f9fa; padding: 15px; border-radius: 5px; margin-top: 10px;">
+                    <p><strong>مدیر:</strong> admin / admin123</p>
+                    <p><strong>استاد:</strong> teacher / teacher123</p>
+                    <p><strong>دانش‌آموز:</strong> student / student123</p>
                 </div>
+                <p style="margin-top: 20px; font-size: 0.9rem;">
+                    سیستم از localStorage مرورگر استفاده می‌کند. اطلاعات پس از پاک کردن کش مرورگر از بین می‌روند.
+                </p>
             </div>
         </div>
         
-        <!-- داشبورد اصلی -->
-        <div id="dashboard" v-if="currentPage === 'dashboard'">
-            <!-- هدر داشبورد -->
-            <div class="dashboard-header">
-                <div class="row align-items-center">
-                    <div class="col-md-8">
-                        <h3><i class="fas fa-user-circle me-2"></i>خوش آمدید، {{ currentUser.name }}</h3>
-                        <p class="mb-0">
-                            <i class="fas fa-user-tag me-2"></i>نقش: {{ currentUser.role }}
-                            <span class="mx-3">|</span>
-                            <i class="fas fa-school me-2"></i>{{ currentUser.school || 'بدون مدرسه' }}
-                        </p>
+        <!-- دشبورد مدیر -->
+        <div id="adminDashboard" class="hidden">
+            <div class="header">
+                <div>
+                    <h1><i class="fas fa-crown"></i> دشبورد مدیریت</h1>
+                    <div class="user-info">
+                        <span id="adminName">مدیر سیستم</span>
+                        <span id="adminTime"></span>
                     </div>
-                    <div class="col-md-4 text-left">
-                        <button class="btn btn-outline-light" @click="logout">
-                            <i class="fas fa-sign-out-alt me-2"></i>خروج از سامانه
+                </div>
+                <button onclick="logout()" class="btn btn-danger">
+                    <i class="fas fa-sign-out-alt"></i> خروج
+                </button>
+            </div>
+            
+            <div class="nav-tabs">
+                <a href="#" class="nav-tab active" onclick="showAdminTab('dashboard')">
+                    <i class="fas fa-tachometer-alt"></i> دشبورد
+                </a>
+                <a href="#" class="nav-tab" onclick="showAdminTab('users')">
+                    <i class="fas fa-users"></i> مدیریت کاربران
+                </a>
+                <a href="#" class="nav-tab" onclick="showAdminTab('addUser')">
+                    <i class="fas fa-user-plus"></i> افزودن کاربر
+                </a>
+                <a href="#" class="nav-tab" onclick="showAdminTab('questions')">
+                    <i class="fas fa-question-circle"></i> همه سوالات
+                </a>
+                <a href="#" class="nav-tab" onclick="showAdminTab('stats')">
+                    <i class="fas fa-chart-bar"></i> آمار سیستم
+                </a>
+            </div>
+            
+            <!-- تب دشبورد -->
+            <div id="adminDashboardContent" class="dashboard-content">
+                <div class="dashboard-grid">
+                    <div class="dashboard-card" onclick="showAdminTab('users')">
+                        <i class="fas fa-users"></i>
+                        <h3>مدیریت کاربران</h3>
+                        <p>مدیریت اساتید و دانش آموزان - افزودن، ویرایش و حذف کاربران</p>
+                    </div>
+                    
+                    <div class="dashboard-card" onclick="showAdminTab('addUser')">
+                        <i class="fas fa-user-plus"></i>
+                        <h3>افزودن کاربر جدید</h3>
+                        <p>افزودن استاد یا دانش آموز جدید به سیستم</p>
+                    </div>
+                    
+                    <div class="dashboard-card" onclick="showAdminTab('questions')">
+                        <i class="fas fa-question-circle"></i>
+                        <h3>مشاهده همه سوالات</h3>
+                        <p>مشاهده و مدیریت تمام سوالات سیستم</p>
+                    </div>
+                    
+                    <div class="dashboard-card" onclick="showAdminTab('stats')">
+                        <i class="fas fa-chart-bar"></i>
+                        <h3>آمار سیستم</h3>
+                        <p>مشاهده آمار و گزارشات سیستم</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- تب مدیریت کاربران -->
+            <div id="adminUsersContent" class="hidden">
+                <div class="table-container">
+                    <h2><i class="fas fa-users"></i> مدیریت کاربران</h2>
+                    <div id="usersAlert"></div>
+                    
+                    <div style="margin-bottom: 20px;">
+                        <button onclick="showAdminTab('addUser')" class="btn btn-success">
+                            <i class="fas fa-plus"></i> افزودن کاربر جدید
                         </button>
                     </div>
+                    
+                    <table id="usersTable">
+                        <thead>
+                            <tr>
+                                <th>نام کاربری</th>
+                                <th>نام کامل</th>
+                                <th>نقش</th>
+                                <th>کد ملی</th>
+                                <th>شهر/مدرسه</th>
+                                <th>مقطع</th>
+                                <th>عملیات</th>
+                            </tr>
+                        </thead>
+                        <tbody id="usersTableBody">
+                            <!-- کاربران به صورت داینامیک اضافه می‌شوند -->
+                        </tbody>
+                    </table>
                 </div>
             </div>
             
-            <!-- پنل مدیر سامانه -->
-            <div id="superadmin-panel" v-if="currentUser.role === 'مدیر سامانه'">
-                <h4 class="mb-4"><i class="fas fa-crown me-2"></i>پنل مدیر سامانه</h4>
-                
-                <ul class="nav nav-tabs" id="superadminTabs" role="tablist">
-                    <li class="nav-item" role="presentation">
-                        <button class="nav-link active" id="schools-tab" data-bs-toggle="tab" data-bs-target="#schools" type="button" role="tab">مدیریت مدارس</button>
-                    </li>
-                    <li class="nav-item" role="presentation">
-                        <button class="nav-link" id="users-tab" data-bs-toggle="tab" data-bs-target="#users" type="button" role="tab">مدیریت کاربران</button>
-                    </li>
-                    <li class="nav-item" role="presentation">
-                        <button class="nav-link" id="reports-tab" data-bs-toggle="tab" data-bs-target="#reports" type="button" role="tab">گزارش‌ها</button>
-                    </li>
-                </ul>
-                
-                <div class="tab-content mt-4" id="superadminTabsContent">
-                    <!-- تب مدیریت مدارس -->
-                    <div class="tab-pane fade show active" id="schools" role="tabpanel">
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="card">
-                                    <div class="card-header">
-                                        <i class="fas fa-plus-circle me-2"></i>افزودن مدرسه جدید
-                                    </div>
-                                    <div class="card-body">
-                                        <div class="mb-3">
-                                            <label for="newSchoolName" class="form-label">نام مدرسه جدید:</label>
-                                            <input type="text" class="form-control" id="newSchoolName" v-model="newSchool.name" placeholder="نام مدرسه را وارد کنید">
-                                        </div>
-                                        <button class="btn btn-primary" @click="addSchool">
-                                            <i class="fas fa-plus me-2"></i>افزودن مدرسه
-                                        </button>
-                                    </div>
-                                </div>
+            <!-- تب افزودن کاربر -->
+            <div id="adminAddUserContent" class="hidden">
+                <div class="form-container">
+                    <h2><i class="fas fa-user-plus"></i> افزودن کاربر جدید</h2>
+                    <div id="addUserAlert"></div>
+                    
+                    <form id="addUserForm">
+                        <div class="form-group">
+                            <label for="newUsername">نام کاربری *</label>
+                            <input type="text" id="newUsername" name="username" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="newPassword">رمز عبور *</label>
+                            <input type="password" id="newPassword" name="password" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="newRole">نقش کاربر *</label>
+                            <select id="newRole" name="role" required onchange="toggleUserFields()">
+                                <option value="">انتخاب کنید</option>
+                                <option value="teacher">استاد</option>
+                                <option value="student">دانش آموز</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="newFullName">نام کامل *</label>
+                            <input type="text" id="newFullName" name="fullName" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="newNationalCode">کد ملی *</label>
+                            <input type="text" id="newNationalCode" name="nationalCode" required>
+                        </div>
+                        
+                        <div id="teacherFields" class="hidden">
+                            <div class="form-group">
+                                <label for="newCity">شهر</label>
+                                <input type="text" id="newCity" name="city">
                             </div>
                             
-                            <div class="col-md-6">
-                                <div class="card">
-                                    <div class="card-header">
-                                        <i class="fas fa-list me-2"></i>لیست مدارس ثبت‌شده
-                                    </div>
-                                    <div class="card-body">
-                                        <div class="table-responsive">
-                                            <table class="table table-hover">
-                                                <thead>
-                                                    <tr>
-                                                        <th>نام مدرسه</th>
-                                                        <th>کد مدرسه</th>
-                                                        <th>عملیات</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    <tr v-for="school in schools" :key="school.id">
-                                                        <td>{{ school.name }}</td>
-                                                        <td>{{ school.code }}</td>
-                                                        <td>
-                                                            <button class="btn btn-sm btn-outline-primary me-2" @click="editSchool(school)">
-                                                                <i class="fas fa-edit"></i>
-                                                            </button>
-                                                            <button class="btn btn-sm btn-outline-danger" @click="deleteSchool(school.id)">
-                                                                <i class="fas fa-trash"></i>
-                                                            </button>
-                                                        </td>
-                                                    </tr>
-                                                </tbody>
-                                            </table>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- تب مدیریت کاربران -->
-                    <div class="tab-pane fade" id="users" role="tabpanel">
-                        <div class="row">
-                            <div class="col-md-8">
-                                <div class="card">
-                                    <div class="card-header">
-                                        <i class="fas fa-users me-2"></i>لیست کاربران سیستم
-                                    </div>
-                                    <div class="card-body">
-                                        <div class="table-responsive">
-                                            <table class="table table-hover">
-                                                <thead>
-                                                    <tr>
-                                                        <th>نام کاربری</th>
-                                                        <th>نام کامل</th>
-                                                        <th>نقش</th>
-                                                        <th>مدرسه</th>
-                                                        <th>عملیات</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    <tr v-for="user in users" :key="user.id">
-                                                        <td>{{ user.username }}</td>
-                                                        <td>{{ user.fullname }}</td>
-                                                        <td>{{ user.role }}</td>
-                                                        <td>{{ user.school }}</td>
-                                                        <td>
-                                                            <button class="btn btn-sm btn-outline-primary me-2" @click="editUser(user)">
-                                                                <i class="fas fa-edit"></i>
-                                                            </button>
-                                                            <button class="btn btn-sm btn-outline-danger" @click="deleteUser(user.id)">
-                                                                <i class="fas fa-trash"></i>
-                                                            </button>
-                                                        </td>
-                                                    </tr>
-                                                </tbody>
-                                            </table>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <div class="col-md-4">
-                                <div class="card">
-                                    <div class="card-header">
-                                        <i class="fas fa-user-plus me-2"></i>افزودن کاربر جدید
-                                    </div>
-                                    <div class="card-body">
-                                        <div class="mb-3">
-                                            <label for="newUsername" class="form-label">نام کاربری:</label>
-                                            <input type="text" class="form-control" id="newUsername" v-model="newUser.username" placeholder="نام کاربری">
-                                        </div>
-                                        <div class="mb-3">
-                                            <label for="newPassword" class="form-label">رمز عبور:</label>
-                                            <input type="password" class="form-control" id="newPassword" v-model="newUser.password" placeholder="رمز عبور">
-                                        </div>
-                                        <div class="mb-3">
-                                            <label for="newFullname" class="form-label">نام کامل:</label>
-                                            <input type="text" class="form-control" id="newFullname" v-model="newUser.fullname" placeholder="نام کامل">
-                                        </div>
-                                        <div class="mb-3">
-                                            <label for="newRole" class="form-label">نقش:</label>
-                                            <select class="form-select" id="newRole" v-model="newUser.role">
-                                                <option value="آموزگار">آموزگار</option>
-                                                <option value="مدیر مدرسه">مدیر مدرسه</option>
-                                                <option value="معاون">معاون</option>
-                                            </select>
-                                        </div>
-                                        <div class="mb-3">
-                                            <label for="newUserSchool" class="form-label">مدرسه:</label>
-                                            <select class="form-select" id="newUserSchool" v-model="newUser.school">
-                                                <option v-for="school in schools" :value="school.name">{{ school.name }}</option>
-                                            </select>
-                                        </div>
-                                        <button class="btn btn-primary w-100" @click="addUser">
-                                            <i class="fas fa-plus me-2"></i>افزودن کاربر
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- تب گزارش‌ها -->
-                    <div class="tab-pane fade" id="reports" role="tabpanel">
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="stat-box">
-                                    <span class="stat-number">{{ schools.length }}</span>
-                                    <span class="stat-label">تعداد مدارس</span>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="stat-box">
-                                    <span class="stat-number">{{ users.length }}</span>
-                                    <span class="stat-label">تعداد کاربران</span>
-                                </div>
+                            <div class="form-group">
+                                <label for="newSchool">نام مدرسه</label>
+                                <input type="text" id="newSchool" name="school">
                             </div>
                         </div>
                         
-                        <div class="card">
-                            <div class="card-header">
-                                <i class="fas fa-chart-bar me-2"></i>نمودار توزیع کاربران بر اساس نقش
-                            </div>
-                            <div class="card-body">
-                                <div class="chart-container">
-                                    <canvas id="roleDistributionChart"></canvas>
-                                </div>
+                        <div id="studentFields" class="hidden">
+                            <div class="form-group">
+                                <label for="newGrade">مقطع تحصیلی</label>
+                                <select id="newGrade" name="grade">
+                                    <option value="">انتخاب کنید</option>
+                                    <option value="دهم">دهم</option>
+                                    <option value="یازدهم">یازدهم</option>
+                                    <option value="دوازدهم">دوازدهم</option>
+                                </select>
                             </div>
                         </div>
+                        
+                        <div style="display: flex; gap: 10px;">
+                            <button type="submit" class="btn btn-success btn-block">
+                                <i class="fas fa-save"></i> افزودن کاربر
+                            </button>
+                            <button type="button" onclick="showAdminTab('users')" class="btn btn-light btn-block">
+                                <i class="fas fa-times"></i> انصراف
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            
+            <!-- تب همه سوالات -->
+            <div id="adminQuestionsContent" class="hidden">
+                <div class="table-container">
+                    <h2><i class="fas fa-question-circle"></i> همه سوالات</h2>
+                    
+                    <div class="questions-grid" id="adminQuestionsGrid">
+                        <!-- سوالات به صورت داینامیک اضافه می‌شوند -->
                     </div>
                 </div>
             </div>
             
-            <!-- پنل مدیر مدرسه -->
-            <div id="school-admin-panel" v-if="currentUser.role === 'مدیر مدرسه'">
-                <h4 class="mb-4"><i class="fas fa-school me-2"></i>پنل مدیر مدرسه</h4>
-                
-                <ul class="nav nav-tabs" id="schoolAdminTabs" role="tablist">
-                    <li class="nav-item" role="presentation">
-                        <button class="nav-link active" id="teachers-tab" data-bs-toggle="tab" data-bs-target="#teachers" type="button" role="tab">مدیریت آموزگاران</button>
-                    </li>
-                    <li class="nav-item" role="presentation">
-                        <button class="nav-link" id="teacher-reports-tab" data-bs-toggle="tab" data-bs-target="#teacher-reports" type="button" role="tab">گزارش عملکرد آموزگاران</button>
-                    </li>
-                    <li class="nav-item" role="presentation">
-                        <button class="nav-link" id="school-stats-tab" data-bs-toggle="tab" data-bs-target="#school-stats" type="button" role="tab">آمار کلی مدرسه</button>
-                    </li>
-                </ul>
-                
-                <div class="tab-content mt-4" id="schoolAdminTabsContent">
-                    <!-- تب مدیریت آموزگاران -->
-                    <div class="tab-pane fade show active" id="teachers" role="tabpanel">
-                        <div class="row">
-                            <div class="col-md-8">
-                                <div class="card">
-                                    <div class="card-header">
-                                        <i class="fas fa-chalkboard-teacher me-2"></i>لیست آموزگاران مدرسه
-                                    </div>
-                                    <div class="card-body">
-                                        <div class="table-responsive">
-                                            <table class="table table-hover">
-                                                <thead>
-                                                    <tr>
-                                                        <th>نام کاربری</th>
-                                                        <th>نام کامل</th>
-                                                        <th>عملیات</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    <tr v-for="teacher in schoolTeachers" :key="teacher.id">
-                                                        <td>{{ teacher.username }}</td>
-                                                        <td>{{ teacher.fullname }}</td>
-                                                        <td>
-                                                            <button class="btn btn-sm btn-outline-primary me-2">
-                                                                <i class="fas fa-eye"></i>
-                                                            </button>
-                                                            <button class="btn btn-sm btn-outline-danger">
-                                                                <i class="fas fa-trash"></i>
-                                                            </button>
-                                                        </td>
-                                                    </tr>
-                                                </tbody>
-                                            </table>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <div class="col-md-4">
-                                <div class="card">
-                                    <div class="card-header">
-                                        <i class="fas fa-user-plus me-2"></i>افزودن آموزگار جدید
-                                    </div>
-                                    <div class="card-body">
-                                        <div class="mb-3">
-                                            <label for="teacherUsername" class="form-label">نام کاربری آموزگار:</label>
-                                            <input type="text" class="form-control" id="teacherUsername" v-model="newTeacher.username" placeholder="نام کاربری">
-                                        </div>
-                                        <div class="mb-3">
-                                            <label for="teacherPassword" class="form-label">رمز عبور آموزگار:</label>
-                                            <input type="password" class="form-control" id="teacherPassword" v-model="newTeacher.password" placeholder="رمز عبور">
-                                        </div>
-                                        <div class="mb-3">
-                                            <label for="teacherFullname" class="form-label">نام کامل آموزگار:</label>
-                                            <input type="text" class="form-control" id="teacherFullname" v-model="newTeacher.fullname" placeholder="نام کامل">
-                                        </div>
-                                        <button class="btn btn-primary w-100" @click="addTeacher">
-                                            <i class="fas fa-plus me-2"></i>افزودن آموزگار
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+            <!-- تب آمار -->
+            <div id="adminStatsContent" class="hidden">
+                <div class="dashboard-grid">
+                    <div class="dashboard-card">
+                        <h3 id="totalUsers">0</h3>
+                        <p>تعداد کاربران</p>
                     </div>
                     
-                    <!-- تب گزارش عملکرد آموزگاران -->
-                    <div class="tab-pane fade" id="teacher-reports" role="tabpanel">
-                        <div class="row">
-                            <div class="col-md-4">
-                                <div class="card">
-                                    <div class="card-header">
-                                        <i class="fas fa-filter me-2"></i>فیلتر آموزگار
-                                    </div>
-                                    <div class="card-body">
-                                        <div class="mb-3">
-                                            <label for="selectTeacher" class="form-label">انتخاب آموزگار:</label>
-                                            <select class="form-select" id="selectTeacher" v-model="selectedTeacher">
-                                                <option v-for="teacher in schoolTeachers" :value="teacher.fullname">{{ teacher.fullname }}</option>
-                                            </select>
-                                        </div>
-                                        <button class="btn btn-primary w-100" @click="loadTeacherReport">
-                                            <i class="fas fa-chart-line me-2"></i>نمایش گزارش
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <div class="col-md-8">
-                                <div v-if="teacherReportData" class="card">
-                                    <div class="card-header">
-                                        <i class="fas fa-chart-pie me-2"></i>گزارش عملکرد آموزگار: {{ selectedTeacher }}
-                                    </div>
-                                    <div class="card-body">
-                                        <div class="row mb-4">
-                                            <div class="col-md-6">
-                                                <div class="stat-box">
-                                                    <span class="stat-number">{{ teacherReportData.studentCount }}</span>
-                                                    <span class="stat-label">تعداد دانش‌آموزان</span>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-6">
-                                                <div class="stat-box">
-                                                    <span class="stat-number">{{ teacherReportData.averageGrade }}</span>
-                                                    <span class="stat-label">میانگین نمرات</span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        
-                                        <div class="chart-container">
-                                            <canvas id="teacherPerformanceChart"></canvas>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                    <div class="dashboard-card">
+                        <h3 id="totalQuestions">0</h3>
+                        <p>تعداد سوالات</p>
                     </div>
                     
-                    <!-- تب آمار کلی مدرسه -->
-                    <div class="tab-pane fade" id="school-stats" role="tabpanel">
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="stat-box">
-                                    <span class="stat-number">{{ schoolStats.teacherCount }}</span>
-                                    <span class="stat-label">تعداد آموزگاران</span>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="stat-box">
-                                    <span class="stat-number">{{ schoolStats.studentCount }}</span>
-                                    <span class="stat-label">تعداد دانش‌آموزان</span>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="card">
-                            <div class="card-header">
-                                <i class="fas fa-chart-bar me-2"></i>نمودار توزیع دانش‌آموزان بر اساس پایه
-                            </div>
-                            <div class="card-body">
-                                <div class="chart-container">
-                                    <canvas id="gradeDistributionChart"></canvas>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- پنل معاون مدرسه -->
-            <div id="assistant-panel" v-if="currentUser.role === 'معاون'">
-                <h4 class="mb-4"><i class="fas fa-clipboard-list me-2"></i>پنل معاون مدرسه</h4>
-                
-                <div class="row">
-                    <div class="col-md-8">
-                        <div class="card">
-                            <div class="card-header">
-                                <i class="fas fa-chart-line me-2"></i>گزارش عملکرد آموزگاران
-                            </div>
-                            <div class="card-body">
-                                <div class="table-responsive">
-                                    <table class="table table-hover">
-                                        <thead>
-                                            <tr>
-                                                <th>نام آموزگار</th>
-                                                <th>تعداد دانش‌آموزان</th>
-                                                <th>میانگین نمرات</th>
-                                                <th>عملکرد</th>
-                                                <th>جزئیات</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <tr v-for="teacher in schoolTeachers" :key="teacher.id">
-                                                <td>{{ teacher.fullname }}</td>
-                                                <td>{{ Math.floor(Math.random() * 30) + 10 }}</td>
-                                                <td>{{ (Math.random() * 2 + 2).toFixed(1) }}</td>
-                                                <td>
-                                                    <span class="badge bg-success">خوب</span>
-                                                </td>
-                                                <td>
-                                                    <button class="btn btn-sm btn-outline-primary">
-                                                        <i class="fas fa-eye me-1"></i>مشاهده
-                                                    </button>
-                                                </td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                        </div>
+                    <div class="dashboard-card">
+                        <h3 id="totalTeachers">0</h3>
+                        <p>اساتید</p>
                     </div>
                     
-                    <div class="col-md-4">
-                        <div class="card">
-                            <div class="card-header">
-                                <i class="fas fa-chart-pie me-2"></i>آمار کلی مدرسه
-                            </div>
-                            <div class="card-body">
-                                <div class="stat-box mb-3">
-                                    <span class="stat-number">{{ schoolStats.teacherCount }}</span>
-                                    <span class="stat-label">تعداد آموزگاران</span>
-                                </div>
-                                <div class="stat-box mb-3">
-                                    <span class="stat-number">{{ schoolStats.studentCount }}</span>
-                                    <span class="stat-label">تعداد دانش‌آموزان</span>
-                                </div>
-                                <div class="stat-box">
-                                    <span class="stat-number">96%</span>
-                                    <span class="stat-label">میانگین رضایت</span>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="card mt-4">
-                            <div class="card-header">
-                                <i class="fas fa-bell me-2"></i>اعلانات اخیر
-                            </div>
-                            <div class="card-body">
-                                <div class="alert alert-info">
-                                    <i class="fas fa-info-circle me-2"></i>
-                                    جلسه معلمان روز سه‌شنبه ساعت ۱۰ صبح
-                                </div>
-                                <div class="alert alert-warning">
-                                    <i class="fas fa-exclamation-triangle me-2"></i>
-                                    مهلت ثبت نمرات تا پایان هفته
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- پنل آموزگار -->
-            <div id="teacher-panel" v-if="currentUser.role === 'آموزگار'">
-                <h4 class="mb-4"><i class="fas fa-chalkboard-teacher me-2"></i>پنل آموزگار</h4>
-                
-                <div class="row">
-                    <div class="col-md-3">
-                        <div class="sidebar">
-                            <ul class="sidebar-menu">
-                                <li>
-                                    <a href="#" :class="{active: teacherActiveTab === 'management'}" @click="teacherActiveTab = 'management'">
-                                        <i class="fas fa-edit me-2"></i>مدیریت نمره و دانش‌آموز
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="#" :class="{active: teacherActiveTab === 'reports'}" @click="teacherActiveTab = 'reports'">
-                                        <i class="fas fa-chart-bar me-2"></i>گزارش‌های فردی
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="#" :class="{active: teacherActiveTab === 'overall'}" @click="teacherActiveTab = 'overall'">
-                                        <i class="fas fa-chart-line me-2"></i>آمار کلی کلاس
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="#" :class="{active: teacherActiveTab === 'enter-scores'}" @click="teacherActiveTab = 'enter-scores'">
-                                        <i class="fas fa-pen-alt me-2"></i>ثبت نمرات
-                                    </a>
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-                    
-                    <div class="col-md-9">
-                        <!-- مدیریت نمره و دانش‌آموز -->
-                        <div v-if="teacherActiveTab === 'management'">
-                            <div class="card">
-                                <div class="card-header">
-                                    <i class="fas fa-user-graduate me-2"></i>لیست دانش‌آموزان
-                                </div>
-                                <div class="card-body">
-                                    <div class="table-responsive">
-                                        <table class="table table-hover">
-                                            <thead>
-                                                <tr>
-                                                    <th>نام دانش‌آموز</th>
-                                                    <th>پایه</th>
-                                                    <th>کلاس</th>
-                                                    <th>مدرسه</th>
-                                                    <th>عملیات</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                <tr v-for="student in teacherStudents" :key="student.id">
-                                                    <td>{{ student.name }}</td>
-                                                    <td>{{ student.grade }}</td>
-                                                    <td>{{ student.class }}</td>
-                                                    <td>{{ student.school }}</td>
-                                                    <td>
-                                                        <button class="btn btn-sm btn-outline-primary me-2" @click="viewStudentScores(student)">
-                                                            <i class="fas fa-eye"></i>
-                                                        </button>
-                                                        <button class="btn btn-sm btn-outline-danger" @click="deleteStudent(student.id)">
-                                                            <i class="fas fa-trash"></i>
-                                                        </button>
-                                                    </td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                    
-                                    <div class="mt-4">
-                                        <h5><i class="fas fa-plus-circle me-2"></i>افزودن دانش‌آموز جدید</h5>
-                                        <div class="row">
-                                            <div class="col-md-4">
-                                                <div class="mb-3">
-                                                    <label for="studentName" class="form-label">نام کامل دانش‌آموز:</label>
-                                                    <input type="text" class="form-control" id="studentName" v-model="newStudent.name" placeholder="نام دانش‌آموز">
-                                                </div>
-                                            </div>
-                                            <div class="col-md-4">
-                                                <div class="mb-3">
-                                                    <label for="studentGrade" class="form-label">پایه:</label>
-                                                    <select class="form-select" id="studentGrade" v-model="newStudent.grade">
-                                                        <option>اول</option>
-                                                        <option>دوم</option>
-                                                        <option>سوم</option>
-                                                        <option>چهارم</option>
-                                                        <option>پنجم</option>
-                                                        <option>ششم</option>
-                                                    </select>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-4">
-                                                <div class="mb-3">
-                                                    <label for="studentClass" class="form-label">کلاس:</label>
-                                                    <input type="text" class="form-control" id="studentClass" v-model="newStudent.class" placeholder="کلاس">
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <button class="btn btn-primary" @click="addStudent">
-                                            <i class="fas fa-plus me-2"></i>ثبت دانش‌آموز
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <!-- ثبت نمرات -->
-                        <div v-if="teacherActiveTab === 'enter-scores'">
-                            <div class="card">
-                                <div class="card-header">
-                                    <i class="fas fa-pen-alt me-2"></i>ثبت نمرات دانش‌آموزان
-                                </div>
-                                <div class="card-body">
-                                    <div class="row mb-4">
-                                        <div class="col-md-6">
-                                            <div class="mb-3">
-                                                <label for="scoreLesson" class="form-label">درس:</label>
-                                                <select class="form-select" id="scoreLesson" v-model="scoreData.lesson">
-                                                    <option value="ریاضی">ریاضی</option>
-                                                    <option value="علوم">علوم</option>
-                                                    <option value="ادبیات فارسی">ادبیات فارسی</option>
-                                                    <option value="مطالعات اجتماعی">مطالعات اجتماعی</option>
-                                                    <option value="هنر">هنر</option>
-                                                    <option value="ورزش">ورزش</option>
-                                                    <option value="قرآن">قرآن</option>
-                                                </select>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <div class="mb-3">
-                                                <label for="scoreDate" class="form-label">تاریخ:</label>
-                                                <input type="date" class="form-control" id="scoreDate" v-model="scoreData.date">
-                                            </div>
-                                        </div>
-                                    </div>
-                                    
-                                    <div class="table-responsive">
-                                        <table class="table table-hover">
-                                            <thead>
-                                                <tr>
-                                                    <th>نام دانش‌آموز</th>
-                                                    <th>پایه</th>
-                                                    <th>کلاس</th>
-                                                    <th>نمره (۱-۴)</th>
-                                                    <th>سطح عملکرد</th>
-                                                    <th>ثبت</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                <tr v-for="student in teacherStudents" :key="student.id">
-                                                    <td>{{ student.name }}</td>
-                                                    <td>{{ student.grade }}</td>
-                                                    <td>{{ student.class }}</td>
-                                                    <td>
-                                                        <input type="number" class="form-control score-input" 
-                                                               min="1" max="4" step="0.5" 
-                                                               v-model="studentScores[student.id]"
-                                                               placeholder="نمره">
-                                                    </td>
-                                                    <td>
-                                                        <span v-if="studentScores[student.id]" class="performance-level" 
-                                                              :class="getPerformanceLevel(studentScores[student.id])">
-                                                            {{ getPerformanceText(studentScores[student.id]) }}
-                                                        </span>
-                                                        <span v-else class="text-muted">--</span>
-                                                    </td>
-                                                    <td>
-                                                        <button class="btn btn-sm btn-primary" 
-                                                                @click="submitScore(student.id, studentScores[student.id])"
-                                                                :disabled="!studentScores[student.id] || studentScores[student.id] < 1 || studentScores[student.id] > 4">
-                                                            <i class="fas fa-save"></i>
-                                                        </button>
-                                                    </td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                    
-                                    <div class="alert alert-info mt-3">
-                                        <i class="fas fa-info-circle me-2"></i>
-                                        نمرات باید بین ۱ تا ۴ باشند. سطح عملکرد به صورت خودکار محاسبه می‌شود.
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <!-- نمرات ثبت شده -->
-                            <div class="card mt-4">
-                                <div class="card-header">
-                                    <i class="fas fa-list-check me-2"></i>نمرات ثبت شده اخیر
-                                </div>
-                                <div class="card-body">
-                                    <div class="table-responsive">
-                                        <table class="table table-hover">
-                                            <thead>
-                                                <tr>
-                                                    <th>دانش‌آموز</th>
-                                                    <th>درس</th>
-                                                    <th>نمره</th>
-                                                    <th>سطح</th>
-                                                    <th>تاریخ</th>
-                                                    <th>عملیات</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                <tr v-for="score in teacherScores.slice().reverse().slice(0, 10)" :key="score.id">
-                                                    <td>{{ score.studentName }}</td>
-                                                    <td>{{ score.lesson }}</td>
-                                                    <td>
-                                                        <strong>{{ score.score }}</strong>
-                                                    </td>
-                                                    <td>
-                                                        <span class="performance-level" :class="getPerformanceLevel(score.score)">
-                                                            {{ getPerformanceText(score.score) }}
-                                                        </span>
-                                                    </td>
-                                                    <td>{{ score.date }}</td>
-                                                    <td>
-                                                        <button class="btn btn-sm btn-outline-danger" @click="deleteScore(score.id)">
-                                                            <i class="fas fa-trash"></i>
-                                                        </button>
-                                                    </td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <!-- گزارش‌های فردی -->
-                        <div v-if="teacherActiveTab === 'reports'">
-                            <div class="card">
-                                <div class="card-header">
-                                    <i class="fas fa-chart-pie me-2"></i>گزارش‌های فردی دانش‌آموزان
-                                </div>
-                                <div class="card-body">
-                                    <div class="row mb-4">
-                                        <div class="col-md-6">
-                                            <div class="mb-3">
-                                                <label for="reportStudent" class="form-label">انتخاب دانش‌آموز:</label>
-                                                <select class="form-select" id="reportStudent" v-model="selectedReportStudent">
-                                                    <option v-for="student in teacherStudents" :value="student">{{ student.name }}</option>
-                                                </select>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <div class="mb-3">
-                                                <label for="reportLesson" class="form-label">انتخاب درس:</label>
-                                                <select class="form-select" id="reportLesson" v-model="selectedReportLesson">
-                                                    <option value="ریاضی">ریاضی</option>
-                                                    <option value="علوم">علوم</option>
-                                                    <option value="ادبیات فارسی">ادبیات فارسی</option>
-                                                    <option value="مطالعات اجتماعی">مطالعات اجتماعی</option>
-                                                    <option value="همه دروس">همه دروس</option>
-                                                </select>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    
-                                    <div v-if="selectedReportStudent">
-                                        <div class="row">
-                                            <div class="col-md-6">
-                                                <div class="chart-container">
-                                                    <canvas id="studentProgressChart"></canvas>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-6">
-                                                <div class="chart-container">
-                                                    <canvas id="studentPerformanceChart"></canvas>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        
-                                        <div class="text-center mt-4">
-                                            <button class="btn btn-success" @click="generateStudentReport(selectedReportStudent)">
-                                                <i class="fas fa-print me-2"></i>چاپ کارنامه این دانش‌آموز
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <!-- آمار کلی کلاس -->
-                        <div v-if="teacherActiveTab === 'overall'">
-                            <div class="card">
-                                <div class="card-header">
-                                    <i class="fas fa-chart-bar me-2"></i>آمار کلی کلاس
-                                </div>
-                                <div class="card-body">
-                                    <div class="row mb-4">
-                                        <div class="col-md-3">
-                                            <div class="stat-box">
-                                                <span class="stat-number">{{ teacherStudents.length }}</span>
-                                                <span class="stat-label">تعداد دانش‌آموزان</span>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-3">
-                                            <div class="stat-box">
-                                                <span class="stat-number">{{ calculateClassAverage() }}</span>
-                                                <span class="stat-label">میانگین نمرات</span>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-3">
-                                            <div class="stat-box">
-                                                <span class="stat-number">{{ calculatePassPercentage() }}%</span>
-                                                <span class="stat-label">نسبت قبولی</span>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-3">
-                                            <div class="stat-box">
-                                                <span class="stat-number">{{ getTopStudent() }}</span>
-                                                <span class="stat-label">دانش‌آموز برتر</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    
-                                    <div class="chart-container">
-                                        <canvas id="classOverallChart"></canvas>
-                                    </div>
-                                    
-                                    <div class="text-center mt-4">
-                                        <button class="btn btn-primary" @click="generateClassReport">
-                                            <i class="fas fa-file-pdf me-2"></i>دریافت گزارش PDF کل کلاس
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- پنل دانش‌آموز -->
-            <div id="student-panel" v-if="currentUser.role === 'دانش‌آموز'">
-                <h4 class="mb-4"><i class="fas fa-user-graduate me-2"></i>پنل دانش‌آموز</h4>
-                
-                <div class="row">
-                    <div class="col-md-4">
-                        <div class="card">
-                            <div class="card-header">
-                                <i class="fas fa-user-circle me-2"></i>اطلاعات دانش‌آموز
-                            </div>
-                            <div class="card-body">
-                                <p><strong>نام:</strong> {{ currentUser.name }}</p>
-                                <p><strong>پایه:</strong> ششم</p>
-                                <p><strong>کلاس:</strong> ۶۰۲</p>
-                                <p><strong>مدرسه:</strong> شهید صدوقی</p>
-                                <p><strong>آموزگار:</strong> سرکار خانم احمدی</p>
-                            </div>
-                        </div>
-                        
-                        <div class="card mt-4">
-                            <div class="card-header">
-                                <i class="fas fa-trophy me-2"></i>دستاوردها
-                            </div>
-                            <div class="card-body">
-                                <div class="alert alert-success">
-                                    <i class="fas fa-award me-2"></i>
-                                    دانش‌آموز برتر هفته
-                                </div>
-                                <div class="alert alert-info">
-                                    <i class="fas fa-star me-2"></i>
-                                    پیشرفت درسی قابل توجه
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="card mt-4">
-                            <div class="card-header">
-                                <i class="fas fa-chart-line me-2"></i>آمار سریع
-                            </div>
-                            <div class="card-body">
-                                <div class="stat-box mb-3">
-                                    <span class="stat-number">{{ studentAverageGrade }}</span>
-                                    <span class="stat-label">میانگین نمرات</span>
-                                </div>
-                                <div class="stat-box">
-                                    <span class="stat-number">{{ getStudentRank() }}</span>
-                                    <span class="stat-label">رتبه در کلاس</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="col-md-8">
-                        <div class="card">
-                            <div class="card-header">
-                                <i class="fas fa-table me-2"></i>کارنامه تحصیلی
-                            </div>
-                            <div class="card-body">
-                                <div id="reportCardContent">
-                                    <div class="report-card">
-                                        <div class="report-header">
-                                            <h3>کارنامه تحصیلی</h3>
-                                            <h5>سال تحصیلی ۱۴۰۳-۱۴۰۲</h5>
-                                            <p><strong>نام دانش‌آموز:</strong> {{ currentUser.name }}</p>
-                                            <p><strong>مدرسه:</strong> شهید صدوقی | <strong>پایه:</strong> ششم | <strong>کلاس:</strong> ۶۰۲</p>
-                                        </div>
-                                        
-                                        <div class="table-responsive">
-                                            <table class="report-table">
-                                                <thead>
-                                                    <tr>
-                                                        <th>درس</th>
-                                                        <th>نمره</th>
-                                                        <th>سطح عملکرد</th>
-                                                        <th>میانگین کلاس</th>
-                                                        <th>مقایسه با کلاس</th>
-                                                        <th>توضیحات آموزگار</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    <tr v-for="(grade, index) in studentGrades" :key="index">
-                                                        <td>{{ grade.lesson }}</td>
-                                                        <td><strong>{{ grade.score }}</strong></td>
-                                                        <td>
-                                                            <span class="performance-level" :class="getPerformanceLevel(grade.score)">
-                                                                {{ getPerformanceText(grade.score) }}
-                                                            </span>
-                                                        </td>
-                                                        <td>{{ grade.classAverage }}</td>
-                                                        <td>
-                                                            <span :class="grade.comparison === 'بالاتر' ? 'text-success' : 'text-danger'">
-                                                                {{ grade.comparison === 'بالاتر' ? '⬆️ بالاتر از میانگین' : 
-                                                                   grade.comparison === 'پایین‌تر' ? '⬇️ پایین‌تر از میانگین' : '⚖️ برابر با میانگین' }}
-                                                            </span>
-                                                        </td>
-                                                        <td>{{ grade.teacherComment }}</td>
-                                                    </tr>
-                                                </tbody>
-                                            </table>
-                                        </div>
-                                        
-                                        <div class="row mt-4">
-                                            <div class="col-md-6">
-                                                <div class="chart-container">
-                                                    <canvas id="studentGradesChart"></canvas>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-6">
-                                                <div class="chart-container">
-                                                    <canvas id="studentComparisonChart"></canvas>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        
-                                        <div class="mt-4">
-                                            <h5>خلاصه عملکرد:</h5>
-                                            <p>{{ getStudentSummary() }}</p>
-                                        </div>
-                                        
-                                        <div class="mt-4 text-center">
-                                            <p><strong>مهر و امضای مدیر مدرسه:</strong></p>
-                                            <p>_________________________</p>
-                                        </div>
-                                    </div>
-                                </div>
-                                
-                                <div class="mt-4 text-center">
-                                    <button class="btn btn-primary btn-lg" @click="downloadReportCard">
-                                        <i class="fas fa-download me-2"></i>دانلود کارنامه PDF
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
+                    <div class="dashboard-card">
+                        <h3 id="totalStudents">0</h3>
+                        <p>دانش آموزان</p>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
-
-    <!-- مودال ویرایش مدرسه -->
-    <div class="modal fade" id="editSchoolModal" tabindex="-1">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">ویرایش مدرسه</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body">
-                    <div class="mb-3">
-                        <label for="editSchoolName" class="form-label">نام مدرسه:</label>
-                        <input type="text" class="form-control" id="editSchoolName" v-model="editingSchool.name">
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">لغو</button>
-                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal" @click="updateSchool">ذخیره تغییرات</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- مودال ویرایش کاربر -->
-    <div class="modal fade" id="editUserModal" tabindex="-1">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">ویرایش کاربر</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body">
-                    <div class="mb-3">
-                        <label for="editUsername" class="form-label">نام کاربری:</label>
-                        <input type="text" class="form-control" id="editUsername" v-model="editingUser.username">
-                    </div>
-                    <div class="mb-3">
-                        <label for="editFullname" class="form-label">نام کامل:</label>
-                        <input type="text" class="form-control" id="editFullname" v-model="editingUser.fullname">
-                    </div>
-                    <div class="mb-3">
-                        <label for="editRole" class="form-label">نقش:</label>
-                        <select class="form-select" id="editRole" v-model="editingUser.role">
-                            <option value="آموزگار">آموزگار</option>
-                            <option value="مدیر مدرسه">مدیر مدرسه</option>
-                            <option value="معاون">معاون</option>
-                        </select>
-                    </div>
-                    <div class="mb-3">
-                        <label for="editUserSchool" class="form-label">مدرسه:</label>
-                        <select class="form-select" id="editUserSchool" v-model="editingUser.school">
-                            <option v-for="school in schools" :value="school.name">{{ school.name }}</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">لغو</button>
-                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal" @click="updateUser">ذخیره تغییرات</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/vue@3.2.47/dist/vue.global.js"></script>
-    <script>
-        const { createApp } = Vue;
-        const { jsPDF } = window.jspdf;
         
-        createApp({
-            data() {
-                return {
-                    currentPage: 'login',
-                    currentUser: {
-                        username: '',
-                        name: '',
-                        role: '',
-                        school: ''
-                    },
-                    loginData: {
-                        username: '',
-                        password: ''
-                    },
-                    // داده‌های مدیر سامانه
-                    schools: [
-                        { id: 1, name: 'دبستان شهید صدوقی', code: 'SCH001' },
-                        { id: 2, name: 'دبیرستان نمونه دولتی امام خمینی', code: 'SCH002' },
-                        { id: 3, name: 'مدرسه غیرانتفاعی علم و ادب', code: 'SCH003' }
-                    ],
-                    users: [
-                        { id: 1, username: 'admin', fullname: 'مدیر سیستم', role: 'مدیر سامانه', school: '' },
-                        { id: 2, username: 'ahmadi', fullname: 'فاطمه احمدی', role: 'آموزگار', school: 'دبستان شهید صدوقی' },
-                        { id: 3, username: 'karimi', fullname: 'محمد کریمی', role: 'مدیر مدرسه', school: 'دبستان شهید صدوقی' },
-                        { id: 4, username: 'mohammadi', fullname: 'علی محمدی', role: 'معاون', school: 'دبستان شهید صدوقی' }
-                    ],
-                    newSchool: { name: '' },
-                    newUser: { username: '', password: '', fullname: '', role: 'آموزگار', school: '' },
-                    editingSchool: { id: null, name: '' },
-                    editingUser: { id: null, username: '', fullname: '', role: '', school: '' },
-                    // داده‌های مدیر مدرسه
-                    schoolTeachers: [
-                        { id: 1, username: 'ahmadi', fullname: 'فاطمه احمدی' },
-                        { id: 2, username: 'rezaei', fullname: 'مریم رضایی' },
-                        { id: 3, username: 'hosseini', fullname: 'سعید حسینی' }
-                    ],
-                    newTeacher: { username: '', password: '', fullname: '' },
-                    selectedTeacher: 'فاطمه احمدی',
-                    teacherReportData: null,
-                    schoolStats: { teacherCount: 12, studentCount: 350 },
-                    // داده‌های آموزگار
-                    teacherActiveTab: 'management',
-                    teacherStudents: [
-                        { id: 1, name: 'علی محمدی', grade: 'ششم', class: '۶۰۲', school: 'دبستان شهید صدوقی' },
-                        { id: 2, name: 'فاطمه احمدی', grade: 'ششم', class: '۶۰۲', school: 'دبستان شهید صدوقی' },
-                        { id: 3, name: 'محمد حسینی', grade: 'ششم', class: '۶۰۲', school: 'دبستان شهید صدوقی' },
-                        { id: 4, name: 'زهرا کریمی', grade: 'ششم', class: '۶۰۲', school: 'دبستان شهید صدوقی' },
-                        { id: 5, name: 'سارا رضایی', grade: 'ششم', class: '۶۰۲', school: 'دبستان شهید صدوقی' }
-                    ],
-                    newStudent: { name: '', grade: 'ششم', class: '' },
-                    // سیستم ثبت نمرات
-                    scoreData: { lesson: 'ریاضی', date: new Date().toISOString().split('T')[0] },
-                    studentScores: {},
-                    teacherScores: [
-                        { id: 1, studentName: 'علی محمدی', lesson: 'ریاضی', score: 4, date: '۱۴۰۲/۱۰/۱۵' },
-                        { id: 2, studentName: 'فاطمه احمدی', lesson: 'ریاضی', score: 3.5, date: '۱۴۰۲/۱۰/۱۵' },
-                        { id: 3, studentName: 'محمد حسینی', lesson: 'ریاضی', score: 3, date: '۱۴۰۲/۱۰/۱۵' },
-                        { id: 4, studentName: 'زهرا کریمی', lesson: 'علوم', score: 3.5, date: '۱۴۰۲/۱۰/۱۰' },
-                        { id: 5, studentName: 'سارا رضایی', lesson: 'علوم', score: 4, date: '۱۴۰۲/۱۰/۱۰' }
-                    ],
-                    // گزارش‌ها
-                    selectedReportStudent: null,
-                    selectedReportLesson: 'ریاضی',
-                    // داده‌های دانش‌آموز
-                    studentGrades: [
-                        { lesson: 'ریاضی', score: 4, classAverage: 3.2, comparison: 'بالاتر', teacherComment: 'عالی! تلاش شما قابل تحسین است.' },
-                        { lesson: 'علوم', score: 3.5, classAverage: 3.1, comparison: 'بالاتر', teacherComment: 'خیلی خوب، ادامه دهید.' },
-                        { lesson: 'ادبیات فارسی', score: 3, classAverage: 2.9, comparison: 'بالاتر', teacherComment: 'پیشرفت خوبی داشته‌اید.' },
-                        { lesson: 'مطالعات اجتماعی', score: 2.5, classAverage: 2.8, comparison: 'پایین‌تر', teacherComment: 'نیاز به تلاش بیشتر دارید.' },
-                        { lesson: 'هنر', score: 4, classAverage: 3.5, comparison: 'بالاتر', teacherComment: 'خلاقیت عالی!' },
-                        { lesson: 'ورزش', score: 4, classAverage: 3.8, comparison: 'بالاتر', teacherComment: 'ورزشکار خوبی هستید.' }
-                    ],
-                    studentAverageGrade: 3.5
-                };
-            },
-            mounted() {
-                // بارگذاری داده‌های اولیه
-                this.initCharts();
-                
-                // بررسی اگر کاربر قبلاً وارد شده است
-                const savedUser = localStorage.getItem('darsban_user');
-                if (savedUser) {
-                    this.currentUser = JSON.parse(savedUser);
-                    this.currentPage = 'dashboard';
+        <!-- دشبورد استاد -->
+        <div id="teacherDashboard" class="hidden">
+            <div class="header">
+                <div>
+                    <h1><i class="fas fa-chalkboard-teacher"></i> دشبورد استاد</h1>
+                    <div class="user-info">
+                        <span id="teacherName">استاد</span>
+                        <span id="teacherTime"></span>
+                    </div>
+                </div>
+                <button onclick="logout()" class="btn btn-danger">
+                    <i class="fas fa-sign-out-alt"></i> خروج
+                </button>
+            </div>
+            
+            <div class="nav-tabs">
+                <a href="#" class="nav-tab active" onclick="showTeacherTab('dashboard')">
+                    <i class="fas fa-tachometer-alt"></i> دشبورد
+                </a>
+                <a href="#" class="nav-tab" onclick="showTeacherTab('addQuestion')">
+                    <i class="fas fa-plus-circle"></i> افزودن سوال
+                </a>
+                <a href="#" class="nav-tab" onclick="showTeacherTab('myQuestions')">
+                    <i class="fas fa-list-alt"></i> سوالات من
+                </a>
+            </div>
+            
+            <!-- تب دشبورد استاد -->
+            <div id="teacherDashboardContent" class="dashboard-content">
+                <div class="dashboard-grid">
+                    <div class="dashboard-card" onclick="showTeacherTab('addQuestion')">
+                        <i class="fas fa-plus-circle"></i>
+                        <h3>افزودن سوال جدید</h3>
+                        <p>طراحی و افزودن سوال جدید برای دانش آموزان</p>
+                    </div>
                     
-                    // اگر آموزگار است، تب ثبت نمرات را فعال کن
-                    if (this.currentUser.role === 'آموزگار') {
-                        this.teacherActiveTab = 'enter-scores';
-                    }
-                }
-                
-                // تنظیم تاریخ امروز
-                this.scoreData.date = new Date().toISOString().split('T')[0];
-            },
-            methods: {
-                login() {
-                    const users = [
-                        { username: 'admin', password: 'admin', name: 'مدیر سیستم', role: 'مدیر سامانه', school: '' },
-                        { username: 'karimi', password: '123', name: 'محمد کریمی', role: 'مدیر مدرسه', school: 'دبستان شهید صدوقی' },
-                        { username: 'mohammadi', password: '123', name: 'علی محمدی', role: 'معاون', school: 'دبستان شهید صدوقی' },
-                        { username: 'ahmadi', password: '123', name: 'فاطمه احمدی', role: 'آموزگار', school: 'دبستان شهید صدوقی' },
-                        { username: 'student1', password: '123', name: 'علی محمدی', role: 'دانش‌آموز', school: 'دبستان شهید صدوقی' }
-                    ];
+                    <div class="dashboard-card" onclick="showTeacherTab('myQuestions')">
+                        <i class="fas fa-list-alt"></i>
+                        <h3>مدیریت سوالات</h3>
+                        <p>مشاهده، ویرایش و حذف سوالات طراحی شده</p>
+                    </div>
                     
-                    const foundUser = users.find(u => 
-                        u.username === this.loginData.username && 
-                        u.password === this.loginData.password
-                    );
+                    <div class="dashboard-card">
+                        <i class="fas fa-chart-line"></i>
+                        <h3>پیشرفت دانش آموزان</h3>
+                        <p>مشاهده عملکرد و پیشرفت دانش آموزان</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- تب افزودن سوال -->
+            <div id="teacherAddQuestionContent" class="hidden">
+                <div class="form-container">
+                    <h2><i class="fas fa-plus-circle"></i> افزودن سوال جدید</h2>
+                    <div id="addQuestionAlert"></div>
                     
-                    if (foundUser) {
-                        this.currentUser = foundUser;
-                        this.currentPage = 'dashboard';
-                        localStorage.setItem('darsban_user', JSON.stringify(foundUser));
+                    <form id="addQuestionForm">
+                        <div class="form-group">
+                            <label for="questionGrade">مقطع تحصیلی *</label>
+                            <select id="questionGrade" name="grade" required onchange="loadSubjects()">
+                                <option value="">انتخاب کنید</option>
+                                <option value="دهم">دهم</option>
+                                <option value="یازدهم">یازدهم</option>
+                                <option value="دوازدهم">دوازدهم</option>
+                            </select>
+                        </div>
                         
-                        // اگر آموزگار است، تب ثبت نمرات را فعال کن
-                        if (this.currentUser.role === 'آموزگار') {
-                            this.teacherActiveTab = 'enter-scores';
-                        }
-                    } else {
-                        alert('نام کاربری یا رمز عبور اشتباه است!');
-                    }
-                },
-                
-                logout() {
-                    this.currentPage = 'login';
-                    this.currentUser = { username: '', name: '', role: '', school: '' };
-                    localStorage.removeItem('darsban_user');
-                },
-                
-                // مدیر سامانه
-                addSchool() {
-                    if (!this.newSchool.name.trim()) {
-                        alert('لطفاً نام مدرسه را وارد کنید');
-                        return;
-                    }
-                    
-                    const newId = this.schools.length > 0 ? Math.max(...this.schools.map(s => s.id)) + 1 : 1;
-                    const newCode = 'SCH' + String(newId).padStart(3, '0');
-                    
-                    this.schools.push({
-                        id: newId,
-                        name: this.newSchool.name,
-                        code: newCode
-                    });
-                    
-                    this.newSchool.name = '';
-                    alert('مدرسه با موفقیت افزوده شد');
-                    this.initCharts();
-                },
-                
-                editSchool(school) {
-                    this.editingSchool = { ...school };
-                    const modal = new bootstrap.Modal(document.getElementById('editSchoolModal'));
-                    modal.show();
-                },
-                
-                updateSchool() {
-                    const index = this.schools.findIndex(s => s.id === this.editingSchool.id);
-                    if (index !== -1) {
-                        this.schools[index].name = this.editingSchool.name;
-                    }
-                },
-                
-                deleteSchool(id) {
-                    if (confirm('آیا از حذف این مدرسه اطمینان دارید؟')) {
-                        this.schools = this.schools.filter(s => s.id !== id);
-                        this.initCharts();
-                    }
-                },
-                
-                addUser() {
-                    if (!this.newUser.username.trim() || !this.newUser.password.trim() || !this.newUser.fullname.trim()) {
-                        alert('لطفاً تمام فیلدها را پر کنید');
-                        return;
-                    }
-                    
-                    const newId = this.users.length > 0 ? Math.max(...this.users.map(u => u.id)) + 1 : 1;
-                    
-                    this.users.push({
-                        id: newId,
-                        username: this.newUser.username,
-                        fullname: this.newUser.fullname,
-                        role: this.newUser.role,
-                        school: this.newUser.school
-                    });
-                    
-                    this.newUser = { username: '', password: '', fullname: '', role: 'آموزگار', school: '' };
-                    alert('کاربر با موفقیت افزوده شد');
-                    this.initCharts();
-                },
-                
-                editUser(user) {
-                    this.editingUser = { ...user };
-                    const modal = new bootstrap.Modal(document.getElementById('editUserModal'));
-                    modal.show();
-                },
-                
-                updateUser() {
-                    const index = this.users.findIndex(u => u.id === this.editingUser.id);
-                    if (index !== -1) {
-                        this.users[index] = { ...this.editingUser };
-                    }
-                },
-                
-                deleteUser(id) {
-                    if (confirm('آیا از حذف این کاربر اطمینان دارید؟')) {
-                        this.users = this.users.filter(u => u.id !== id);
-                        this.initCharts();
-                    }
-                },
-                
-                // مدیر مدرسه
-                addTeacher() {
-                    if (!this.newTeacher.username.trim() || !this.newTeacher.password.trim() || !this.newTeacher.fullname.trim()) {
-                        alert('لطفاً تمام فیلدها را پر کنید');
-                        return;
-                    }
-                    
-                    const newId = this.schoolTeachers.length > 0 ? Math.max(...this.schoolTeachers.map(t => t.id)) + 1 : 1;
-                    
-                    this.schoolTeachers.push({
-                        id: newId,
-                        username: this.newTeacher.username,
-                        fullname: this.newTeacher.fullname
-                    });
-                    
-                    this.newTeacher = { username: '', password: '', fullname: '' };
-                    alert('آموزگار با موفقیت افزوده شد');
-                },
-                
-                loadTeacherReport() {
-                    this.teacherReportData = {
-                        studentCount: Math.floor(Math.random() * 30) + 10,
-                        averageGrade: (Math.random() * 2 + 2).toFixed(1)
-                    };
-                    
-                    setTimeout(() => {
-                        this.initTeacherPerformanceChart();
-                    }, 100);
-                },
-                
-                // سیستم دانش‌آموزان و نمرات
-                addStudent() {
-                    if (!this.newStudent.name.trim() || !this.newStudent.class.trim()) {
-                        alert('لطفاً نام دانش‌آموز و کلاس را وارد کنید');
-                        return;
-                    }
-                    
-                    const newId = this.teacherStudents.length > 0 ? Math.max(...this.teacherStudents.map(s => s.id)) + 1 : 1;
-                    
-                    this.teacherStudents.push({
-                        id: newId,
-                        name: this.newStudent.name,
-                        grade: this.newStudent.grade,
-                        class: this.newStudent.class,
-                        school: 'دبستان شهید صدوقی'
-                    });
-                    
-                    this.newStudent = { name: '', grade: 'ششم', class: '' };
-                    alert('دانش‌آموز با موفقیت ثبت شد');
-                },
-                
-                deleteStudent(id) {
-                    if (confirm('آیا از حذف این دانش‌آموز اطمینان دارید؟')) {
-                        this.teacherStudents = this.teacherStudents.filter(s => s.id !== id);
-                        // حذف نمرات مربوط به این دانش‌آموز
-                        this.teacherScores = this.teacherScores.filter(score => {
-                            const student = this.teacherStudents.find(s => s.name === score.studentName);
-                            return student;
-                        });
-                    }
-                },
-                
-                viewStudentScores(student) {
-                    this.selectedReportStudent = student;
-                    this.teacherActiveTab = 'reports';
-                },
-                
-                // سیستم ثبت نمرات
-                getPerformanceLevel(score) {
-                    if (score >= 3.5) return 'level-excellent';
-                    if (score >= 2.5) return 'level-good';
-                    if (score >= 1.5) return 'level-average';
-                    return 'level-poor';
-                },
-                
-                getPerformanceText(score) {
-                    if (score >= 3.5) return 'خیلی خوب';
-                    if (score >= 2.5) return 'خوب';
-                    if (score >= 1.5) return 'قابل قبول';
-                    return 'نیاز به تلاش';
-                },
-                
-                submitScore(studentId, score) {
-                    if (!score || score < 1 || score > 4) {
-                        alert('نمره باید بین ۱ تا ۴ باشد');
-                        return;
-                    }
-                    
-                    const student = this.teacherStudents.find(s => s.id === studentId);
-                    if (!student) return;
-                    
-                    const newId = this.teacherScores.length > 0 ? Math.max(...this.teacherScores.map(s => s.id)) + 1 : 1;
-                    const today = new Date();
-                    const dateStr = `${today.getFullYear()}/${today.getMonth() + 1}/${today.getDate()}`;
-                    
-                    this.teacherScores.push({
-                        id: newId,
-                        studentName: student.name,
-                        lesson: this.scoreData.lesson,
-                        score: parseFloat(score),
-                        date: dateStr
-                    });
-                    
-                    // پاک کردن فیلد نمره برای این دانش‌آموز
-                    this.$set(this.studentScores, studentId, '');
-                    
-                    alert(`نمره ${score} برای ${student.name} در درس ${this.scoreData.lesson} ثبت شد`);
-                },
-                
-                deleteScore(scoreId) {
-                    if (confirm('آیا از حذف این نمره اطمینان دارید؟')) {
-                        this.teacherScores = this.teacherScores.filter(s => s.id !== scoreId);
-                    }
-                },
-                
-                // محاسبات آماری
-                calculateClassAverage() {
-                    if (this.teacherScores.length === 0) return 0;
-                    const sum = this.teacherScores.reduce((total, score) => total + score.score, 0);
-                    return (sum / this.teacherScores.length).toFixed(1);
-                },
-                
-                calculatePassPercentage() {
-                    if (this.teacherScores.length === 0) return 0;
-                    const passCount = this.teacherScores.filter(score => score.score >= 2.5).length;
-                    return Math.round((passCount / this.teacherScores.length) * 100);
-                },
-                
-                getTopStudent() {
-                    if (this.teacherScores.length === 0) return '--';
-                    
-                    const studentAverages = {};
-                    const studentCounts = {};
-                    
-                    this.teacherScores.forEach(score => {
-                        if (!studentAverages[score.studentName]) {
-                            studentAverages[score.studentName] = 0;
-                            studentCounts[score.studentName] = 0;
-                        }
-                        studentAverages[score.studentName] += score.score;
-                        studentCounts[score.studentName] += 1;
-                    });
-                    
-                    let topStudent = '';
-                    let topAverage = 0;
-                    
-                    for (const student in studentAverages) {
-                        const average = studentAverages[student] / studentCounts[student];
-                        if (average > topAverage) {
-                            topAverage = average;
-                            topStudent = student;
-                        }
-                    }
-                    
-                    return topStudent.split(' ')[0]; // فقط نام کوچک
-                },
-                
-                // گزارش‌گیری دانش‌آموز
-                generateStudentReport(student) {
-                    alert(`گزارش برای ${student.name} آماده شد. سیستم چاپ را اجرا کنید.`);
-                    window.print();
-                },
-                
-                // گزارش‌گیری کل کلاس
-                generateClassReport() {
-                    const doc = new jsPDF('p', 'mm', 'a4');
-                    
-                    // هدر گزارش
-                    doc.setFontSize(20);
-                    doc.text('گزارش عملکرد کل کلاس', 105, 20, { align: 'center' });
-                    
-                    doc.setFontSize(12);
-                    doc.text(`آموزگار: ${this.currentUser.name}`, 20, 40);
-                    doc.text(`تاریخ: ${new Date().toLocaleDateString('fa-IR')}`, 20, 50);
-                    doc.text(`تعداد دانش‌آموزان: ${this.teacherStudents.length}`, 20, 60);
-                    doc.text(`میانگین نمرات کلاس: ${this.calculateClassAverage()}`, 20, 70);
-                    
-                    // جدول دانش‌آموزان
-                    let y = 90;
-                    doc.setFontSize(14);
-                    doc.text('لیست دانش‌آموزان و میانگین نمرات', 20, y);
-                    y += 10;
-                    
-                    doc.setFontSize(10);
-                    doc.text('ردیف', 20, y);
-                    doc.text('نام دانش‌آموز', 40, y);
-                    doc.text('میانگین نمرات', 100, y);
-                    doc.text('سطح عملکرد', 150, y);
-                    
-                    y += 10;
-                    doc.setLineWidth(0.5);
-                    doc.line(20, y, 190, y);
-                    y += 5;
-                    
-                    const studentAverages = {};
-                    const studentCounts = {};
-                    
-                    this.teacherScores.forEach(score => {
-                        if (!studentAverages[score.studentName]) {
-                            studentAverages[score.studentName] = 0;
-                            studentCounts[score.studentName] = 0;
-                        }
-                        studentAverages[score.studentName] += score.score;
-                        studentCounts[score.studentName] += 1;
-                    });
-                    
-                    let row = 1;
-                    for (const studentName in studentAverages) {
-                        const average = (studentAverages[studentName] / studentCounts[studentName]).toFixed(1);
-                        const level = this.getPerformanceText(parseFloat(average));
+                        <div class="form-group">
+                            <label for="questionSubject">درس *</label>
+                            <select id="questionSubject" name="subject" required>
+                                <option value="">ابتدا مقطع را انتخاب کنید</option>
+                            </select>
+                        </div>
                         
-                        doc.text(row.toString(), 20, y);
-                        doc.text(studentName, 40, y);
-                        doc.text(average, 100, y);
-                        doc.text(level, 150, y);
+                        <div class="form-group">
+                            <label for="questionType">نوع سوال *</label>
+                            <select id="questionType" name="type" required onchange="toggleQuestionFields()">
+                                <option value="multiple_choice">چند گزینه‌ای</option>
+                                <option value="descriptive">تشریحی</option>
+                                <option value="true_false">صحیح/غلط</option>
+                            </select>
+                        </div>
                         
-                        y += 10;
-                        row++;
+                        <div class="form-group">
+                            <label for="questionDifficulty">سطح سختی</label>
+                            <select id="questionDifficulty" name="difficulty">
+                                <option value="easy">آسان</option>
+                                <option value="medium" selected>متوسط</option>
+                                <option value="hard">سخت</option>
+                            </select>
+                        </div>
                         
-                        if (y > 250) {
-                            doc.addPage();
-                            y = 20;
-                        }
-                    }
+                        <div class="form-group">
+                            <label for="questionText">متن سوال *</label>
+                            <textarea id="questionText" name="text" required 
+                                      placeholder="متن سوال را اینجا وارد کنید..."></textarea>
+                        </div>
+                        
+                        <div id="multipleChoiceFields">
+                            <div class="form-group">
+                                <label>گزینه ۱ *</label>
+                                <input type="text" name="option1" id="option1">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label>گزینه ۲ *</label>
+                                <input type="text" name="option2" id="option2">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label>گزینه ۳ *</label>
+                                <input type="text" name="option3" id="option3">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label>گزینه ۴ *</label>
+                                <input type="text" name="option4" id="option4">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label>گزینه صحیح *</label>
+                                <select name="correctOption" id="correctOption">
+                                    <option value="1">گزینه ۱</option>
+                                    <option value="2">گزینه ۲</option>
+                                    <option value="3">گزینه ۳</option>
+                                    <option value="4">گزینه ۴</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div id="descriptiveFields" class="hidden">
+                            <div class="form-group">
+                                <label>پاسخ صحیح *</label>
+                                <textarea name="correctAnswer" id="correctAnswerDescriptive" 
+                                          placeholder="پاسخ صحیح سوال را وارد کنید..."></textarea>
+                            </div>
+                        </div>
+                        
+                        <div id="trueFalseFields" class="hidden">
+                            <div class="form-group">
+                                <label>پاسخ صحیح *</label>
+                                <select name="correctAnswerTF" id="correctAnswerTrueFalse">
+                                    <option value="true">صحیح</option>
+                                    <option value="false">غلط</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div style="display: flex; gap: 10px;">
+                            <button type="submit" class="btn btn-success btn-block">
+                                <i class="fas fa-save"></i> ذخیره سوال
+                            </button>
+                            <button type="button" onclick="showTeacherTab('dashboard')" class="btn btn-light btn-block">
+                                <i class="fas fa-times"></i> انصراف
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            
+            <!-- تب سوالات من -->
+            <div id="teacherMyQuestionsContent" class="hidden">
+                <div class="table-container">
+                    <h2><i class="fas fa-list-alt"></i> سوالات من</h2>
+                    <div id="myQuestionsAlert"></div>
                     
-                    // ذخیره PDF
-                    doc.save(`گزارش_کلاس_${this.currentUser.name}.pdf`);
-                },
-                
-                // سیستم کارنامه دانش‌آموز
-                getStudentRank() {
-                    const ranks = ['اول', 'دوم', 'سوم', 'چهارم', 'پنجم'];
-                    return ranks[Math.floor(Math.random() * ranks.length)];
-                },
-                
-                getStudentSummary() {
-                    const avg = this.studentAverageGrade;
-                    if (avg >= 3.5) {
-                        return 'عملکرد شما عالی است! در تمام دروس پیشرفت خوبی داشته‌اید. ادامه دهید.';
-                    } else if (avg >= 3) {
-                        return 'عملکرد شما خوب است. در برخی دروس می‌توانید بهتر عمل کنید.';
-                    } else if (avg >= 2.5) {
-                        return 'عملکرد شما قابل قبول است. نیاز به تلاش بیشتر در برخی دروس دارید.';
-                    } else {
-                        return 'نیاز به تلاش جدی‌تری دارید. با معلم خود مشورت کنید.';
-                    }
-                },
-                
-                downloadReportCard() {
-                    const element = document.getElementById('reportCardContent');
+                    <div class="questions-grid" id="teacherQuestionsGrid">
+                        <!-- سوالات استاد به صورت داینامیک اضافه می‌شوند -->
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- دشبورد دانش آموز -->
+        <div id="studentDashboard" class="hidden">
+            <div class="header">
+                <div>
+                    <h1><i class="fas fa-graduation-cap"></i> دشبورد دانش آموز</h1>
+                    <div class="user-info">
+                        <span id="studentName">دانش آموز</span>
+                        <span id="studentGrade"></span>
+                        <span id="studentTime"></span>
+                    </div>
+                </div>
+                <button onclick="logout()" class="btn btn-danger">
+                    <i class="fas fa-sign-out-alt"></i> خروج
+                </button>
+            </div>
+            
+            <div class="nav-tabs">
+                <a href="#" class="nav-tab active" onclick="showStudentTab('dashboard')">
+                    <i class="fas fa-tachometer-alt"></i> دشبورد
+                </a>
+                <a href="#" class="nav-tab" onclick="showStudentTab('viewQuestions')">
+                    <i class="fas fa-book-open"></i> سوالات
+                </a>
+                <a href="#" class="nav-tab" onclick="showStudentTab('myAnswers')">
+                    <i class="fas fa-check-circle"></i> پاسخ‌های من
+                </a>
+            </div>
+            
+            <!-- تب دشبورد دانش آموز -->
+            <div id="studentDashboardContent" class="dashboard-content">
+                <div class="dashboard-grid">
+                    <div class="dashboard-card" onclick="showStudentTab('viewQuestions')">
+                        <i class="fas fa-book-open"></i>
+                        <h3>مشاهده سوالات</h3>
+                        <p id="studentGradeText">مشاهده سوالات مقطع شما</p>
+                    </div>
                     
-                    html2canvas(element, {
-                        scale: 2,
-                        useCORS: true,
-                        logging: false,
-                        backgroundColor: '#ffffff'
-                    }).then(canvas => {
-                        const imgData = canvas.toDataURL('image/png');
-                        const pdf = new jsPDF('p', 'mm', 'a4');
-                        const imgWidth = 190;
-                        const imgHeight = canvas.height * imgWidth / canvas.width;
-                        
-                        pdf.addImage(imgData, 'PNG', 10, 10, imgWidth, imgHeight);
-                        pdf.save(`کارنامه_${this.currentUser.name}.pdf`);
-                    });
-                },
-                
-                // نمودارها
-                initCharts() {
-                    // نمودار توزیع نقش‌ها
-                    const roleCtx = document.getElementById('roleDistributionChart');
-                    if (roleCtx) {
-                        const roleCounts = {};
-                        this.users.forEach(user => {
-                            roleCounts[user.role] = (roleCounts[user.role] || 0) + 1;
-                        });
-                        
-                        new Chart(roleCtx.getContext('2d'), {
-                            type: 'pie',
-                            data: {
-                                labels: Object.keys(roleCounts),
-                                datasets: [{
-                                    data: Object.values(roleCounts),
-                                    backgroundColor: ['#4A90E2', '#FFC107', '#28A745', '#DC3545', '#6C757D']
-                                }]
-                            },
-                            options: {
-                                responsive: true,
-                                plugins: {
-                                    legend: { position: 'bottom' }
-                                }
-                            }
-                        });
-                    }
+                    <div class="dashboard-card" onclick="showStudentTab('myAnswers')">
+                        <i class="fas fa-check-circle"></i>
+                        <h3>پاسخ‌های من</h3>
+                        <p>مشاهده سوالات پاسخ داده شده</p>
+                    </div>
                     
-                    // نمودار توزیع پایه‌ها
-                    const gradeCtx = document.getElementById('gradeDistributionChart');
-                    if (gradeCtx) {
-                        new Chart(gradeCtx.getContext('2d'), {
-                            type: 'bar',
-                            data: {
-                                labels: ['اول', 'دوم', 'سوم', 'چهارم', 'پنجم', 'ششم'],
-                                datasets: [{
-                                    label: 'تعداد دانش‌آموزان',
-                                    data: [45, 52, 48, 55, 60, 58],
-                                    backgroundColor: '#4A90E2'
-                                }]
-                            },
-                            options: { responsive: true }
-                        });
-                    }
+                    <div class="dashboard-card">
+                        <i class="fas fa-chart-line"></i>
+                        <h3>پیشرفت تحصیلی</h3>
+                        <p>مشاهده نمودار پیشرفت در دروس مختلف</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- تب مشاهده سوالات -->
+            <div id="studentViewQuestionsContent" class="hidden">
+                <div class="table-container">
+                    <h2><i class="fas fa-book-open"></i> سوالات</h2>
                     
-                    // نمودار پیشرفت دانش‌آموز
-                    const progressCtx = document.getElementById('studentProgressChart');
-                    if (progressCtx && this.selectedReportStudent) {
-                        const studentScores = this.teacherScores
-                            .filter(s => s.studentName === this.selectedReportStudent.name)
-                            .slice(-5);
-                        
-                        new Chart(progressCtx.getContext('2d'), {
-                            type: 'line',
-                            data: {
-                                labels: studentScores.map((s, i) => `نمره ${i+1}`),
-                                datasets: [{
-                                    label: `پیشرفت ${this.selectedReportStudent.name}`,
-                                    data: studentScores.map(s => s.score),
-                                    borderColor: '#4A90E2',
-                                    backgroundColor: 'rgba(74, 144, 226, 0.1)',
-                                    fill: true
-                                }]
-                            },
-                            options: {
-                                responsive: true,
-                                scales: {
-                                    y: { min: 1, max: 4 }
-                                }
-                            }
-                        });
-                    }
+                    <div style="margin-bottom: 20px;">
+                        <div id="subjectFilters" style="display: flex; gap: 10px; flex-wrap: wrap;">
+                            <!-- فیلترهای درس به صورت داینامیک اضافه می‌شوند -->
+                        </div>
+                    </div>
                     
-                    // نمودار عملکرد دانش‌آموز
-                    const performanceCtx = document.getElementById('studentPerformanceChart');
-                    if (performanceCtx && this.selectedReportStudent) {
-                        const studentScores = this.teacherScores
-                            .filter(s => s.studentName === this.selectedReportStudent.name);
-                        
-                        const levelCounts = {
-                            'خیلی خوب': 0,
-                            'خوب': 0,
-                            'قابل قبول': 0,
-                            'نیاز به تلاش': 0
-                        };
-                        
-                        studentScores.forEach(score => {
-                            levelCounts[this.getPerformanceText(score.score)]++;
-                        });
-                        
-                        new Chart(performanceCtx.getContext('2d'), {
-                            type: 'doughnut',
-                            data: {
-                                labels: Object.keys(levelCounts),
-                                datasets: [{
-                                    data: Object.values(levelCounts),
-                                    backgroundColor: ['#28A745', '#4A90E2', '#FFC107', '#DC3545']
-                                }]
-                            },
-                            options: {
-                                responsive: true,
-                                plugins: {
-                                    legend: { position: 'bottom' }
-                                }
-                            }
-                        });
-                    }
+                    <div class="questions-grid" id="studentQuestionsGrid">
+                        <!-- سوالات دانش آموز به صورت داینامیک اضافه می‌شوند -->
+                    </div>
+                </div>
+            </div>
+            
+            <!-- تب پاسخ‌های من -->
+            <div id="studentMyAnswersContent" class="hidden">
+                <div class="table-container">
+                    <h2><i class="fas fa-check-circle"></i> پاسخ‌های من</h2>
                     
-                    // نمودار کلی کلاس
-                    const classCtx = document.getElementById('classOverallChart');
-                    if (classCtx) {
-                        const lessonAverages = {};
-                        const lessonCounts = {};
-                        
-                        this.teacherScores.forEach(score => {
-                            if (!lessonAverages[score.lesson]) {
-                                lessonAverages[score.lesson] = 0;
-                                lessonCounts[score.lesson] = 0;
-                            }
-                            lessonAverages[score.lesson] += score.score;
-                            lessonCounts[score.lesson] += 1;
-                        });
-                        
-                        const lessons = Object.keys(lessonAverages);
-                        const averages = lessons.map(lesson => 
-                            (lessonAverages[lesson] / lessonCounts[lesson]).toFixed(1)
-                        );
-                        
-                        new Chart(classCtx.getContext('2d'), {
-                            type: 'bar',
-                            data: {
-                                labels: lessons,
-                                datasets: [{
-                                    label: 'میانگین نمرات',
-                                    data: averages,
-                                    backgroundColor: '#4A90E2'
-                                }]
-                            },
-                            options: {
-                                responsive: true,
-                                scales: {
-                                    y: { min: 1, max: 4 }
-                                }
-                            }
-                        });
-                    }
-                    
-                    // نمودار نمرات دانش‌آموز
-                    const studentGradesCtx = document.getElementById('studentGradesChart');
-                    if (studentGradesCtx) {
-                        new Chart(studentGradesCtx.getContext('2d'), {
-                            type: 'radar',
-                            data: {
-                                labels: this.studentGrades.map(g => g.lesson),
-                                datasets: [{
-                                    label: 'نمرات دانش‌آموز',
-                                    data: this.studentGrades.map(g => g.score),
-                                    backgroundColor: 'rgba(74, 144, 226, 0.2)',
-                                    borderColor: '#4A90E2'
-                                }]
-                            },
-                            options: {
-                                responsive: true,
-                                scales: {
-                                    r: { min: 1, max: 4 }
-                                }
-                            }
-                        });
-                    }
-                    
-                    // نمودار مقایسه دانش‌آموز با کلاس
-                    const comparisonCtx = document.getElementById('studentComparisonChart');
-                    if (comparisonCtx) {
-                        new Chart(comparisonCtx.getContext('2d'), {
-                            type: 'bar',
-                            data: {
-                                labels: this.studentGrades.map(g => g.lesson),
-                                datasets: [
-                                    {
-                                        label: 'دانش‌آموز',
-                                        data: this.studentGrades.map(g => g.score),
-                                        backgroundColor: '#4A90E2'
-                                    },
-                                    {
-                                        label: 'میانگین کلاس',
-                                        data: this.studentGrades.map(g => g.classAverage),
-                                        backgroundColor: '#FFC107'
-                                    }
-                                ]
-                            },
-                            options: {
-                                responsive: true,
-                                scales: {
-                                    y: { min: 1, max: 4 }
-                                }
-                            }
-                        });
-                    }
-                },
-                
-                initTeacherPerformanceChart() {
-                    const teacherCtx = document.getElementById('teacherPerformanceChart');
-                    if (teacherCtx) {
-                        new Chart(teacherCtx.getContext('2d'), {
-                            type: 'bar',
-                            data: {
-                                labels: ['مهر', 'آبان', 'آذر', 'دی', 'بهمن', 'اسفند'],
-                                datasets: [{
-                                    label: 'میانگین نمرات کلاس',
-                                    data: [2.8, 3.1, 3.3, 3.4, 3.5, 3.6],
-                                    backgroundColor: '#4A90E2'
-                                }]
-                            },
-                            options: { responsive: true }
-                        });
-                    }
-                }
+                    <table id="answersTable">
+                        <thead>
+                            <tr>
+                                <th>سوال</th>
+                                <th>درس</th>
+                                <th>پاسخ شما</th>
+                                <th>وضعیت</th>
+                                <th>تاریخ</th>
+                            </tr>
+                        </thead>
+                        <tbody id="answersTableBody">
+                            <!-- پاسخ‌ها به صورت داینامیک اضافه می‌شوند -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- فوتر -->
+    <div class="footer">
+        سیستم بانک سوالات - طراحی شده برای GitHub Pages
+    </div>
+    
+    <script>
+        // ==================== متغیرهای جهانی ====================
+        let currentUser = null;
+        let users = [];
+        let questions = [];
+        let answers = [];
+        let subjects = [
+            { id: 1, name: 'ریاضی دهم', grade: 'دهم' },
+            { id: 2, name: 'فیزیک دهم', grade: 'دهم' },
+            { id: 3, name: 'شیمی دهم', grade: 'دهم' },
+            { id: 4, name: 'ریاضی یازدهم', grade: 'یازدهم' },
+            { id: 5, name: 'فیزیک یازدهم', grade: 'یازدهم' },
+            { id: 6, name: 'شیمی یازدهم', grade: 'یازدهم' },
+            { id: 7, name: 'ریاضی دوازدهم', grade: 'دوازدهم' },
+            { id: 8, name: 'فیزیک دوازدهم', grade: 'دوازدهم' },
+            { id: 9, name: 'شیمی دوازدهم', grade: 'دوازدهم' }
+        ];
+        
+        // ==================== تابع‌های کمکی ====================
+        function showAlert(elementId, message, type = 'error') {
+            const alertDiv = document.getElementById(elementId);
+            alertDiv.innerHTML = `
+                <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'warning' ? 'exclamation-triangle' : 'exclamation-circle'}"></i>
+                ${message}
+            `;
+            alertDiv.className = `alert alert-${type}`;
+            alertDiv.classList.remove('hidden');
+            
+            // پنهان کردن خودکار پیام
+            setTimeout(() => {
+                alertDiv.classList.add('hidden');
+            }, 5000);
+        }
+        
+        function updateTime(elementId) {
+            const now = new Date();
+            const timeString = now.toLocaleTimeString('fa-IR');
+            const dateString = now.toLocaleDateString('fa-IR');
+            const element = document.getElementById(elementId);
+            if (element) {
+                element.textContent = ` | ${dateString} - ${timeString}`;
             }
-        }).mount('#app');
+        }
+        
+        // ==================== مدیریت LocalStorage ====================
+        function initializeData() {
+            // بارگذاری کاربران از localStorage
+            const savedUsers = localStorage.getItem('questionBankUsers');
+            if (savedUsers) {
+                users = JSON.parse(savedUsers);
+            } else {
+                // ایجاد کاربران پیش‌فرض
+                users = [
+                    {
+                        id: 1,
+                        username: 'admin',
+                        password: 'admin123',
+                        role: 'admin',
+                        fullName: 'مدیر سیستم',
+                        nationalCode: '0000000000',
+                        createdAt: new Date().toISOString()
+                    },
+                    {
+                        id: 2,
+                        username: 'teacher',
+                        password: 'teacher123',
+                        role: 'teacher',
+                        fullName: 'استاد نمونه',
+                        nationalCode: '1111111111',
+                        city: 'تهران',
+                        school: 'دبیرستان نمونه',
+                        createdAt: new Date().toISOString()
+                    },
+                    {
+                        id: 3,
+                        username: 'student',
+                        password: 'student123',
+                        role: 'student',
+                        fullName: 'دانش آموز نمونه',
+                        nationalCode: '2222222222',
+                        grade: 'دهم',
+                        createdAt: new Date().toISOString()
+                    }
+                ];
+                saveUsers();
+            }
+            
+            // بارگذاری سوالات از localStorage
+            const savedQuestions = localStorage.getItem('questionBankQuestions');
+            if (savedQuestions) {
+                questions = JSON.parse(savedQuestions);
+            } else {
+                // ایجاد سوالات نمونه
+                questions = [
+                    {
+                        id: 1,
+                        text: 'مجموع زوایای داخلی یک مثلث چند درجه است؟',
+                        subject: 'ریاضی دهم',
+                        grade: 'دهم',
+                        type: 'multiple_choice',
+                        options: ['۹۰ درجه', '۱۸۰ درجه', '۲۷۰ درجه', '۳۶۰ درجه'],
+                        correctAnswer: '۲',
+                        difficulty: 'easy',
+                        createdBy: 2,
+                        createdAt: new Date().toISOString()
+                    },
+                    {
+                        id: 2,
+                        text: 'شتاب گرانش زمین تقریباً چند متر بر مجذور ثانیه است؟',
+                        subject: 'فیزیک دهم',
+                        grade: 'دهم',
+                        type: 'multiple_choice',
+                        options: ['۵.۸', '۹.۸', '۱۱.۲', '۱۵.۶'],
+                        correctAnswer: '۲',
+                        difficulty: 'medium',
+                        createdBy: 2,
+                        createdAt: new Date().toISOString()
+                    }
+                ];
+                saveQuestions();
+            }
+            
+            // بارگذاری پاسخ‌ها از localStorage
+            const savedAnswers = localStorage.getItem('questionBankAnswers');
+            if (savedAnswers) {
+                answers = JSON.parse(savedAnswers);
+            } else {
+                answers = [];
+                saveAnswers();
+            }
+            
+            // بارگذاری کاربر جاری از sessionStorage
+            const savedCurrentUser = sessionStorage.getItem('currentUser');
+            if (savedCurrentUser) {
+                currentUser = JSON.parse(savedCurrentUser);
+                showDashboard();
+            }
+        }
+        
+        function saveUsers() {
+            localStorage.setItem('questionBankUsers', JSON.stringify(users));
+        }
+        
+        function saveQuestions() {
+            localStorage.setItem('questionBankQuestions', JSON.stringify(questions));
+        }
+        
+        function saveAnswers() {
+            localStorage.setItem('questionBankAnswers', JSON.stringify(answers));
+        }
+        
+        // ==================== مدیریت احراز هویت ====================
+        function login(username, password) {
+            const user = users.find(u => u.username === username && u.password === password);
+            
+            if (user) {
+                currentUser = user;
+                sessionStorage.setItem('currentUser', JSON.stringify(user));
+                showDashboard();
+                return true;
+            }
+            
+            return false;
+        }
+        
+        function logout() {
+            currentUser = null;
+            sessionStorage.removeItem('currentUser');
+            showLoginPage();
+        }
+        
+        function showLoginPage() {
+            document.getElementById('loginPage').classList.remove('hidden');
+            document.getElementById('adminDashboard').classList.add('hidden');
+            document.getElementById('teacherDashboard').classList.add('hidden');
+            document.getElementById('studentDashboard').classList.add('hidden');
+        }
+        
+        function showDashboard() {
+            document.getElementById('loginPage').classList.add('hidden');
+            
+            if (currentUser.role === 'admin') {
+                document.getElementById('adminDashboard').classList.remove('hidden');
+                document.getElementById('teacherDashboard').classList.add('hidden');
+                document.getElementById('studentDashboard').classList.add('hidden');
+                showAdminTab('dashboard');
+                updateAdminStats();
+                loadUsersTable();
+                loadAdminQuestions();
+            } else if (currentUser.role === 'teacher') {
+                document.getElementById('adminDashboard').classList.add('hidden');
+                document.getElementById('teacherDashboard').classList.remove('hidden');
+                document.getElementById('studentDashboard').classList.add('hidden');
+                showTeacherTab('dashboard');
+                loadTeacherQuestions();
+            } else if (currentUser.role === 'student') {
+                document.getElementById('adminDashboard').classList.add('hidden');
+                document.getElementById('teacherDashboard').classList.add('hidden');
+                document.getElementById('studentDashboard').classList.remove('hidden');
+                showStudentTab('dashboard');
+                loadStudentQuestions();
+                loadStudentAnswers();
+            }
+        }
+        
+        // ==================== مدیریت تب‌های مدیر ====================
+        function showAdminTab(tabName) {
+            // مخفی کردن همه تب‌ها
+            document.getElementById('adminDashboardContent').classList.add('hidden');
+            document.getElementById('adminUsersContent').classList.add('hidden');
+            document.getElementById('adminAddUserContent').classList.add('hidden');
+            document.getElementById('adminQuestionsContent').classList.add('hidden');
+            document.getElementById('adminStatsContent').classList.add('hidden');
+            
+            // غیرفعال کردن همه تب‌ها
+            document.querySelectorAll('.nav-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // نمایش تب انتخاب شده
+            if (tabName === 'dashboard') {
+                document.getElementById('adminDashboardContent').classList.remove('hidden');
+                document.querySelector('.nav-tab[onclick*="dashboard"]').classList.add('active');
+            } else if (tabName === 'users') {
+                document.getElementById('adminUsersContent').classList.remove('hidden');
+                document.querySelector('.nav-tab[onclick*="users"]').classList.add('active');
+            } else if (tabName === 'addUser') {
+                document.getElementById('adminAddUserContent').classList.remove('hidden');
+                document.querySelector('.nav-tab[onclick*="addUser"]').classList.add('active');
+            } else if (tabName === 'questions') {
+                document.getElementById('adminQuestionsContent').classList.remove('hidden');
+                document.querySelector('.nav-tab[onclick*="questions"]').classList.add('active');
+            } else if (tabName === 'stats') {
+                document.getElementById('adminStatsContent').classList.remove('hidden');
+                document.querySelector('.nav-tab[onclick*="stats"]').classList.add('active');
+                updateAdminStats();
+            }
+        }
+        
+        function toggleUserFields() {
+            const role = document.getElementById('newRole').value;
+            document.getElementById('teacherFields').classList.add('hidden');
+            document.getElementById('studentFields').classList.add('hidden');
+            
+            if (role === 'teacher') {
+                document.getElementById('teacherFields').classList.remove('hidden');
+            } else if (role === 'student') {
+                document.getElementById('studentFields').classList.remove('hidden');
+            }
+        }
+        
+        function loadUsersTable() {
+            const tbody = document.getElementById('usersTableBody');
+            tbody.innerHTML = '';
+            
+            users.forEach(user => {
+                const roleText = user.role === 'admin' ? 'مدیر' : 
+                                user.role === 'teacher' ? 'استاد' : 'دانش آموز';
+                
+                const location = user.role === 'teacher' ? 
+                                (user.city || 'ثبت نشده') : 
+                                (user.role === 'student' ? (user.school || 'ثبت نشده') : '');
+                
+                const grade = user.grade || '';
+                
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${user.username}</td>
+                    <td>${user.fullName}</td>
+                    <td>${roleText}</td>
+                    <td>${user.nationalCode}</td>
+                    <td>${location}</td>
+                    <td>${grade}</td>
+                    <td class="action-buttons">
+                        <button onclick="editUser(${user.id})" class="btn btn-info btn-sm">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button onclick="deleteUser(${user.id})" class="btn btn-danger btn-sm">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+        
+        function addUser(formData) {
+            const newUser = {
+                id: users.length > 0 ? Math.max(...users.map(u => u.id)) + 1 : 1,
+                username: formData.username,
+                password: formData.password,
+                role: formData.role,
+                fullName: formData.fullName,
+                nationalCode: formData.nationalCode,
+                city: formData.city || '',
+                school: formData.school || '',
+                grade: formData.grade || '',
+                createdAt: new Date().toISOString()
+            };
+            
+            // بررسی تکراری نبودن نام کاربری
+            if (users.some(u => u.username === newUser.username)) {
+                showAlert('addUserAlert', 'نام کاربری تکراری است!', 'error');
+                return false;
+            }
+            
+            users.push(newUser);
+            saveUsers();
+            loadUsersTable();
+            showAlert('addUserAlert', 'کاربر با موفقیت افزوده شد!', 'success');
+            
+            // ریست کردن فرم
+            document.getElementById('addUserForm').reset();
+            
+            return true;
+        }
+        
+        function deleteUser(userId) {
+            if (userId === currentUser.id) {
+                showAlert('usersAlert', 'شما نمی‌توانید حساب خود را حذف کنید!', 'error');
+                return;
+            }
+            
+            if (confirm('آیا از حذف این کاربر اطمینان دارید؟')) {
+                users = users.filter(u => u.id !== userId);
+                saveUsers();
+                loadUsersTable();
+                showAlert('usersAlert', 'کاربر با موفقیت حذف شد!', 'success');
+            }
+        }
+        
+        function editUser(userId) {
+            const user = users.find(u => u.id === userId);
+            if (user) {
+                alert('ویرایش کاربر در نسخه‌های بعدی اضافه خواهد شد.');
+            }
+        }
+        
+        function updateAdminStats() {
+            document.getElementById('totalUsers').textContent = users.length;
+            document.getElementById('totalQuestions').textContent = questions.length;
+            document.getElementById('totalTeachers').textContent = 
+                users.filter(u => u.role === 'teacher').length;
+            document.getElementById('totalStudents').textContent = 
+                users.filter(u => u.role === 'student').length;
+        }
+        
+        function loadAdminQuestions() {
+            const container = document.getElementById('adminQuestionsGrid');
+            container.innerHTML = '';
+            
+            if (questions.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-question-circle"></i>
+                        <h3>هیچ سوالی وجود ندارد</h3>
+                        <p>هنوز هیچ سوالی در سیستم ثبت نشده است.</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            questions.forEach(question => {
+                const teacher = users.find(u => u.id === question.createdBy);
+                const teacherName = teacher ? teacher.fullName : 'نامشخص';
+                
+                const difficultyText = question.difficulty === 'easy' ? 'آسان' : 
+                                     question.difficulty === 'medium' ? 'متوسط' : 'سخت';
+                
+                const card = document.createElement('div');
+                card.className = 'question-card';
+                card.innerHTML = `
+                    <div class="question-header">
+                        <span class="difficulty difficulty-${question.difficulty}">${difficultyText}</span>
+                        <span>${question.subject} - ${question.grade}</span>
+                    </div>
+                    
+                    <div class="question-text">${question.text}</div>
+                    
+                    ${question.type === 'multiple_choice' ? `
+                    <ul class="options-list">
+                        ${question.options.map((opt, index) => `
+                        <li>${String.fromCharCode(1776 + index)}. ${opt}</li>
+                        `).join('')}
+                    </ul>
+                    ` : ''}
+                    
+                    <div class="teacher-info">
+                        طراح: ${teacherName} | 
+                        تاریخ: ${new Date(question.createdAt).toLocaleDateString('fa-IR')}
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+        
+        // ==================== مدیریت تب‌های استاد ====================
+        function showTeacherTab(tabName) {
+            // مخفی کردن همه تب‌ها
+            document.getElementById('teacherDashboardContent').classList.add('hidden');
+            document.getElementById('teacherAddQuestionContent').classList.add('hidden');
+            document.getElementById('teacherMyQuestionsContent').classList.add('hidden');
+            
+            // غیرفعال کردن همه تب‌ها
+            document.querySelectorAll('.nav-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // نمایش تب انتخاب شده
+            if (tabName === 'dashboard') {
+                document.getElementById('teacherDashboardContent').classList.remove('hidden');
+                document.querySelector('.nav-tab[onclick*="dashboard"]').classList.add('active');
+            } else if (tabName === 'addQuestion') {
+                document.getElementById('teacherAddQuestionContent').classList.remove('hidden');
+                document.querySelector('.nav-tab[onclick*="addQuestion"]').classList.add('active');
+            } else if (tabName === 'myQuestions') {
+                document.getElementById('teacherMyQuestionsContent').classList.remove('hidden');
+                document.querySelector('.nav-tab[onclick*="myQuestions"]').classList.add('active');
+                loadTeacherQuestions();
+            }
+        }
+        
+        function loadSubjects() {
+            const grade = document.getElementById('questionGrade').value;
+            const subjectSelect = document.getElementById('questionSubject');
+            
+            subjectSelect.innerHTML = '<option value="">انتخاب کنید</option>';
+            
+            if (grade) {
+                const gradeSubjects = subjects.filter(s => s.grade === grade);
+                gradeSubjects.forEach(subject => {
+                    const option = document.createElement('option');
+                    option.value = subject.name;
+                    option.textContent = subject.name;
+                    subjectSelect.appendChild(option);
+                });
+            }
+        }
+        
+        function toggleQuestionFields() {
+            const type = document.getElementById('questionType').value;
+            
+            document.getElementById('multipleChoiceFields').classList.add('hidden');
+            document.getElementById('descriptiveFields').classList.add('hidden');
+            document.getElementById('trueFalseFields').classList.add('hidden');
+            
+            if (type === 'multiple_choice') {
+                document.getElementById('multipleChoiceFields').classList.remove('hidden');
+            } else if (type === 'descriptive') {
+                document.getElementById('descriptiveFields').classList.remove('hidden');
+            } else if (type === 'true_false') {
+                document.getElementById('trueFalseFields').classList.remove('hidden');
+            }
+        }
+        
+        function addQuestion(formData) {
+            const newQuestion = {
+                id: questions.length > 0 ? Math.max(...questions.map(q => q.id)) + 1 : 1,
+                text: formData.text,
+                subject: formData.subject,
+                grade: formData.grade,
+                type: formData.type,
+                difficulty: formData.difficulty,
+                createdBy: currentUser.id,
+                createdAt: new Date().toISOString()
+            };
+            
+            if (formData.type === 'multiple_choice') {
+                newQuestion.options = [
+                    formData.option1,
+                    formData.option2,
+                    formData.option3,
+                    formData.option4
+                ];
+                newQuestion.correctAnswer = formData.correctOption;
+            } else if (formData.type === 'descriptive') {
+                newQuestion.correctAnswer = formData.correctAnswer;
+            } else if (formData.type === 'true_false') {
+                newQuestion.correctAnswer = formData.correctAnswerTF;
+            }
+            
+            questions.push(newQuestion);
+            saveQuestions();
+            showAlert('addQuestionAlert', 'سوال با موفقیت افزوده شد!', 'success');
+            
+            // ریست کردن فرم
+            document.getElementById('addQuestionForm').reset();
+            toggleQuestionFields();
+            
+            return true;
+        }
+        
+        function loadTeacherQuestions() {
+            const container = document.getElementById('teacherQuestionsGrid');
+            container.innerHTML = '';
+            
+            const teacherQuestions = questions.filter(q => q.createdBy === currentUser.id);
+            
+            if (teacherQuestions.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-question-circle"></i>
+                        <h3>هیچ سوالی وجود ندارد</h3>
+                        <p>شما هنوز هیچ سوالی ایجاد نکرده‌اید.</p>
+                        <button onclick="showTeacherTab('addQuestion')" class="btn btn-primary" style="margin-top: 20px;">
+                            <i class="fas fa-plus"></i> افزودن سوال جدید
+                        </button>
+                    </div>
+                `;
+                return;
+            }
+            
+            teacherQuestions.forEach(question => {
+                const difficultyText = question.difficulty === 'easy' ? 'آسان' : 
+                                     question.difficulty === 'medium' ? 'متوسط' : 'سخت';
+                
+                const card = document.createElement('div');
+                card.className = 'question-card';
+                card.innerHTML = `
+                    <div class="question-header">
+                        <span class="difficulty difficulty-${question.difficulty}">${difficultyText}</span>
+                        <span>${question.subject} - ${question.grade}</span>
+                    </div>
+                    
+                    <div class="question-text">${question.text}</div>
+                    
+                    ${question.type === 'multiple_choice' ? `
+                    <ul class="options-list">
+                        ${question.options.map((opt, index) => `
+                        <li>${String.fromCharCode(1776 + index)}. ${opt}</li>
+                        `).join('')}
+                    </ul>
+                    <p><strong>پاسخ صحیح:</strong> گزینه ${question.correctAnswer}</p>
+                    ` : ''}
+                    
+                    <div class="teacher-info">
+                        تاریخ ایجاد: ${new Date(question.createdAt).toLocaleDateString('fa-IR')}
+                    </div>
+                    
+                    <div style="margin-top: 15px; display: flex; gap: 10px;">
+                        <button onclick="editQuestion(${question.id})" class="btn btn-info">
+                            <i class="fas fa-edit"></i> ویرایش
+                        </button>
+                        <button onclick="deleteQuestion(${question.id})" class="btn btn-danger">
+                            <i class="fas fa-trash"></i> حذف
+                        </button>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+        
+        function deleteQuestion(questionId) {
+            if (confirm('آیا از حذف این سوال اطمینان دارید؟')) {
+                questions = questions.filter(q => q.id !== questionId);
+                saveQuestions();
+                loadTeacherQuestions();
+                showAlert('myQuestionsAlert', 'سوال با موفقیت حذف شد!', 'success');
+            }
+        }
+        
+        function editQuestion(questionId) {
+            alert('ویرایش سوال در نسخه‌های بعدی اضافه خواهد شد.');
+        }
+        
+        // ==================== مدیریت تب‌های دانش آموز ====================
+        function showStudentTab(tabName) {
+            // مخفی کردن همه تب‌ها
+            document.getElementById('studentDashboardContent').classList.add('hidden');
+            document.getElementById('studentViewQuestionsContent').classList.add('hidden');
+            document.getElementById('studentMyAnswersContent').classList.add('hidden');
+            
+            // غیرفعال کردن همه تب‌ها
+            document.querySelectorAll('.nav-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // نمایش تب انتخاب شده
+            if (tabName === 'dashboard') {
+                document.getElementById('studentDashboardContent').classList.remove('hidden');
+                document.querySelector('.nav-tab[onclick*="dashboard"]').classList.add('active');
+            } else if (tabName === 'viewQuestions') {
+                document.getElementById('studentViewQuestionsContent').classList.remove('hidden');
+                document.querySelector('.nav-tab[onclick*="viewQuestions"]').classList.add('active');
+                loadSubjectFilters();
+                loadStudentQuestions();
+            } else if (tabName === 'myAnswers') {
+                document.getElementById('studentMyAnswersContent').classList.remove('hidden');
+                document.querySelector('.nav-tab[onclick*="myAnswers"]').classList.add('active');
+                loadStudentAnswers();
+            }
+        }
+        
+        function loadSubjectFilters() {
+            const container = document.getElementById('subjectFilters');
+            container.innerHTML = '';
+            
+            // افزودن دکمه "همه دروس"
+            const allButton = document.createElement('button');
+            allButton.className = 'btn btn-primary';
+            allButton.textContent = 'همه دروس';
+            allButton.onclick = () => loadStudentQuestions();
+            container.appendChild(allButton);
+            
+            // دریافت دروس مقطع دانش آموز
+            const studentGrade = currentUser.grade;
+            const gradeSubjects = subjects.filter(s => s.grade === studentGrade);
+            
+            gradeSubjects.forEach(subject => {
+                const button = document.createElement('button');
+                button.className = 'btn btn-info';
+                button.textContent = subject.name;
+                button.onclick = () => loadStudentQuestions(subject.name);
+                container.appendChild(button);
+            });
+        }
+        
+        function loadStudentQuestions(subjectFilter = null) {
+            const container = document.getElementById('studentQuestionsGrid');
+            container.innerHTML = '';
+            
+            const studentGrade = currentUser.grade;
+            let filteredQuestions = questions.filter(q => q.grade === studentGrade);
+            
+            if (subjectFilter) {
+                filteredQuestions = filteredQuestions.filter(q => q.subject === subjectFilter);
+            }
+            
+            if (filteredQuestions.length === 0) {
+                const message = subjectFilter ? 
+                    `هیچ سوالی برای درس ${subjectFilter} وجود ندارد.` :
+                    `هیچ سوالی برای مقطع ${studentGrade} وجود ندارد.`;
+                
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-book-open"></i>
+                        <h3>هیچ سوالی یافت نشد</h3>
+                        <p>${message}</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            filteredQuestions.forEach(question => {
+                const teacher = users.find(u => u.id === question.createdBy);
+                const teacherName = teacher ? teacher.fullName : 'نامشخص';
+                
+                const difficultyText = question.difficulty === 'easy' ? 'آسان' : 
+                                     question.difficulty === 'medium' ? 'متوسط' : 'سخت';
+                
+                // بررسی آیا دانش آموز قبلاً به این سوال پاسخ داده است
+                const existingAnswer = answers.find(a => 
+                    a.questionId === question.id && a.studentId === currentUser.id
+                );
+                
+                const card = document.createElement('div');
+                card.className = 'question-card';
+                card.innerHTML = `
+                    <div class="question-header">
+                        <span class="difficulty difficulty-${question.difficulty}">${difficultyText}</span>
+                        <span>${question.subject}</span>
+                    </div>
+                    
+                    <div class="question-text">${question.text}</div>
+                    
+                    ${question.type === 'multiple_choice' && !existingAnswer ? `
+                    <div class="answer-section">
+                        <p><strong>گزینه‌ها:</strong></p>
+                        <ul class="options-list" id="options_${question.id}">
+                            ${question.options.map((opt, index) => `
+                            <li onclick="selectOption(${question.id}, ${index + 1})">
+                                ${String.fromCharCode(1776 + index)}. ${opt}
+                            </li>
+                            `).join('')}
+                        </ul>
+                        
+                        <button onclick="submitAnswer(${question.id})" class="btn btn-success answer-btn">
+                            <i class="fas fa-paper-plane"></i> ثبت پاسخ
+                        </button>
+                    </div>
+                    ` : ''}
+                    
+                    ${existingAnswer ? `
+                    <div class="answer-section">
+                        <p><strong>پاسخ شما:</strong> ${existingAnswer.answer}</p>
+                        <p><strong>وضعیت:</strong> 
+                            <span style="color: ${existingAnswer.isCorrect ? '#2ecc71' : '#e74c3c'}; font-weight: bold;">
+                                ${existingAnswer.isCorrect ? 'صحیح ✓' : 'غلط ✗'}
+                            </span>
+                        </p>
+                        ${!existingAnswer.isCorrect && question.correctAnswer ? `
+                        <p><strong>پاسخ صحیح:</strong> ${question.correctAnswer}</p>
+                        ` : ''}
+                    </div>
+                    ` : ''}
+                    
+                    <div class="teacher-info">
+                        طراح: ${teacherName} | 
+                        تاریخ: ${new Date(question.createdAt).toLocaleDateString('fa-IR')}
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+        
+        function selectOption(questionId, optionIndex) {
+            const optionsList = document.getElementById(`options_${questionId}`);
+            if (optionsList) {
+                const options = optionsList.querySelectorAll('li');
+                options.forEach(li => li.classList.remove('selected'));
+                options[optionIndex - 1].classList.add('selected');
+            }
+        }
+        
+        function submitAnswer(questionId) {
+            const optionsList = document.getElementById(`options_${questionId}`);
+            if (!optionsList) return;
+            
+            const selectedOption = optionsList.querySelector('.selected');
+            if (!selectedOption) {
+                alert('لطفاً یک گزینه انتخاب کنید!');
+                return;
+            }
+            
+            const optionIndex = Array.from(optionsList.children).indexOf(selectedOption) + 1;
+            const question = questions.find(q => q.id === questionId);
+            
+            if (!question) return;
+            
+            const isCorrect = question.correctAnswer === optionIndex.toString();
+            
+            // ذخیره پاسخ
+            const newAnswer = {
+                id: answers.length > 0 ? Math.max(...answers.map(a => a.id)) + 1 : 1,
+                questionId: questionId,
+                studentId: currentUser.id,
+                answer: optionIndex.toString(),
+                isCorrect: isCorrect,
+                answeredAt: new Date().toISOString()
+            };
+            
+            answers.push(newAnswer);
+            saveAnswers();
+            
+            // نمایش پیام
+            if (isCorrect) {
+                alert('🎉 پاسخ شما صحیح است!');
+            } else {
+                alert(`❌ پاسخ شما اشتباه است. پاسخ صحیح: گزینه ${question.correctAnswer}`);
+            }
+            
+            // بارگذاری مجدد سوالات
+            loadStudentQuestions();
+        }
+        
+        function loadStudentAnswers() {
+            const tbody = document.getElementById('answersTableBody');
+            tbody.innerHTML = '';
+            
+            const studentAnswers = answers.filter(a => a.studentId === currentUser.id);
+            
+            if (studentAnswers.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="5" style="text-align: center; padding: 40px; color: var(--gray);">
+                            <i class="fas fa-check-circle" style="font-size: 2rem; margin-bottom: 10px; display: block;"></i>
+                            شما هنوز به هیچ سوالی پاسخ نداده‌اید.
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+            
+            studentAnswers.forEach(answer => {
+                const question = questions.find(q => q.id === answer.questionId);
+                if (!question) return;
+                
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${question.text.substring(0, 50)}...</td>
+                    <td>${question.subject}</td>
+                    <td>${answer.answer}</td>
+                    <td>
+                        <span style="color: ${answer.isCorrect ? '#2ecc71' : '#e74c3c'}; font-weight: bold;">
+                            ${answer.isCorrect ? 'صحیح ✓' : 'غلط ✗'}
+                        </span>
+                    </td>
+                    <td>${new Date(answer.answeredAt).toLocaleDateString('fa-IR')}</td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+        
+        // ==================== مدیریت رویدادها ====================
+        document.addEventListener('DOMContentLoaded', function() {
+            // مقداردهی اولیه
+            initializeData();
+            
+            // رویداد فرم ورود
+            document.getElementById('loginForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const username = document.getElementById('username').value;
+                const password = document.getElementById('password').value;
+                
+                if (login(username, password)) {
+                    showAlert('loginAlert', 'ورود موفقیت‌آمیز بود!', 'success');
+                } else {
+                    showAlert('loginAlert', 'نام کاربری یا رمز عبور اشتباه است!', 'error');
+                }
+            });
+            
+            // رویداد فرم افزودن کاربر
+            document.getElementById('addUserForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const formData = {
+                    username: document.getElementById('newUsername').value,
+                    password: document.getElementById('newPassword').value,
+                    role: document.getElementById('newRole').value,
+                    fullName: document.getElementById('newFullName').value,
+                    nationalCode: document.getElementById('newNationalCode').value,
+                    city: document.getElementById('newCity').value,
+                    school: document.getElementById('newSchool').value,
+                    grade: document.getElementById('newGrade').value
+                };
+                
+                addUser(formData);
+            });
+            
+            // رویداد فرم افزودن سوال
+            document.getElementById('addQuestionForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const formData = {
+                    text: document.getElementById('questionText').value,
+                    subject: document.getElementById('questionSubject').value,
+                    grade: document.getElementById('questionGrade').value,
+                    type: document.getElementById('questionType').value,
+                    difficulty: document.getElementById('questionDifficulty').value,
+                    option1: document.getElementById('option1').value,
+                    option2: document.getElementById('option2').value,
+                    option3: document.getElementById('option3').value,
+                    option4: document.getElementById('option4').value,
+                    correctOption: document.getElementById('correctOption').value,
+                    correctAnswer: document.getElementById('correctAnswerDescriptive').value,
+                    correctAnswerTF: document.getElementById('correctAnswerTrueFalse').value
+                };
+                
+                addQuestion(formData);
+            });
+            
+            // به‌روزرسانی زمان هر دقیقه
+            setInterval(() => {
+                updateTime('adminTime');
+                updateTime('teacherTime');
+                updateTime('studentTime');
+            }, 60000);
+            
+            // به‌روزرسانی اولیه زمان
+            updateTime('adminTime');
+            updateTime('teacherTime');
+            updateTime('studentTime');
+            
+            // تنظیم نام کاربر در صفحات
+            if (currentUser) {
+                document.getElementById('adminName').textContent = currentUser.fullName;
+                document.getElementById('teacherName').textContent = currentUser.fullName;
+                document.getElementById('studentName').textContent = currentUser.fullName;
+                document.getElementById('studentGrade').textContent = currentUser.grade ? ` | مقطع: ${currentUser.grade}` : '';
+                document.getElementById('studentGradeText').textContent = 
+                    `مشاهده سوالات مقطع ${currentUser.grade || 'شما'}`;
+            }
+        });
     </script>
 </body>
 </html>
